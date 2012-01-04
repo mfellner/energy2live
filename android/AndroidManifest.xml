@@ -25,12 +25,14 @@
         android:theme="@android:style/Theme.Black.NoTitleBar" >
         
         <activity
-            android:name=".E2LMainActivity" >
+            android:name=".E2LLoginActivity" >
             <intent-filter >
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".E2LMainActivity" >
         </activity>
         <activity
             android:name=".E2LSettingsActivity" >

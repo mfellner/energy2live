@@ -15,6 +15,10 @@
 <resources>
 
     <string name="app_name">Energy2Live</string>
+    <string name="lbl_email">Enter your email address</string>
+    <string name="lbl_password">Enter your password</string>
+    <string name="btn_login">Login</string>
+    <string name="btn_register">Register</string>
     <string name="btn_new_track">Start New Track</string>
     <string name="btn_add_activity">Add New Activity</string>
     <string name="main_actionbar_title">Energy2Live</string>
