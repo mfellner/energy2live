@@ -29,7 +29,8 @@ public class E2LSettingsActivity extends Activity {
 		setContentView(R.layout.activity_settings);
 
 		ActionBar actionBar = (ActionBar) findViewById(R.id.settings_actionbar);
-		actionBar.setHomeAction(new IntentAction(this, E2LMainActivity.createIntent(this), R.drawable.ic_action_home));
+		actionBar.setHomeAction(new IntentAction(this, Utils.createIntent(this, E2LMainActivity.class),
+				R.drawable.ic_action_home));
 	}
 
 	/**

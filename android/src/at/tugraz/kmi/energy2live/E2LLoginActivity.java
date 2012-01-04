@@ -31,7 +31,7 @@ public class E2LLoginActivity extends Activity {
 		if (v.getId() != R.id.btn_login)
 			return;
 		// TODO: verify login
-		startActivity(E2LMainActivity.createIntent(this));
+		startActivity(Utils.createIntent(this, E2LMainActivity.class));
 		finish();
 	}
 

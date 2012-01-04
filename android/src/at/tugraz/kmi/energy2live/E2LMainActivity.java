@@ -16,9 +16,10 @@
 package at.tugraz.kmi.energy2live;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import at.tugraz.kmi.energy2live.widget.ActionBar;
 import at.tugraz.kmi.energy2live.widget.ActionBar.IntentAction;
 
@@ -33,14 +34,24 @@ public class E2LMainActivity extends Activity {
 				R.drawable.ic_action_settings));
 	}
 
-	/**
-	 * Creates an Intent for this activity.
-	 * 
-	 * @return Intent for this activity.
-	 */
-	public static Intent createIntent(Context context) {
-		Intent i = new Intent(context, E2LMainActivity.class);
-		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		return i;
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main_menu, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menu_settings:
+			startActivity(Utils.createIntent(this, E2LSettingsActivity.class));
+			return true;
+		case R.id.menu_about:
+			// TODO: show about dialog
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 }
