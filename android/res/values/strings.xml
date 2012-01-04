@@ -14,7 +14,12 @@
      limitations under the License. -->
 <resources>
 
-    <string name="hello">Hello World, Energy2LiveActivity!</string>
     <string name="app_name">Energy2Live</string>
+    <string name="btn_new_track">Start New Track</string>
+    <string name="btn_add_activity">Add New Activity</string>
+    <string name="main_actionbar_title">Energy2Live</string>
+    <string name="settings_actionbar_title">Settings</string>
+    
+    <string name="actionbar_activity_not_found">Failed to open intent…</string>
 
 </resources>

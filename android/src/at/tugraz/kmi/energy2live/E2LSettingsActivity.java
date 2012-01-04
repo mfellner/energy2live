@@ -22,15 +22,14 @@ import android.os.Bundle;
 import at.tugraz.kmi.energy2live.widget.ActionBar;
 import at.tugraz.kmi.energy2live.widget.ActionBar.IntentAction;
 
-public class E2LMainActivity extends Activity {
+public class E2LSettingsActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_settings);
 
-		ActionBar actionBar = (ActionBar) findViewById(R.id.main_actionbar);
-		actionBar.addAction(new IntentAction(this, Utils.createIntent(this, E2LSettingsActivity.class),
-				R.drawable.ic_action_settings));
+		ActionBar actionBar = (ActionBar) findViewById(R.id.settings_actionbar);
+		actionBar.setHomeAction(new IntentAction(this, E2LMainActivity.createIntent(this), R.drawable.ic_action_home));
 	}
 
 	/**

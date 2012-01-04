@@ -22,29 +22,8 @@
     android:orientation="vertical" >
     
     <at.tugraz.kmi.energy2live.widget.ActionBar
-       android:id="@+id/main_actionbar"
-       e2l:title="@string/main_actionbar_title"
+       android:id="@+id/settings_actionbar"
+       e2l:title="@string/settings_actionbar_title"
        style="@style/ActionBar" />
-
-    <Button
-        android:id="@+id/btn_new_track"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="130dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:text="@string/btn_new_track" />
-    
-    <Button
-        android:id="@+id/btn_add_activity"
-        android:layout_below="@id/btn_new_track"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:text="@string/btn_add_activity" />
 
 </RelativeLayout>
