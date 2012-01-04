@@ -37,7 +37,12 @@
         <activity
             android:name=".E2LSettingsActivity" >
         </activity>
-        
+        <activity
+            android:name=".E2LRecordNewActivity" >
+        </activity>  
+        <activity
+            android:name=".E2LAddNewActivity" >
+        </activity>        
     </application>
 
 </manifest>

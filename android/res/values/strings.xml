@@ -17,14 +17,16 @@
     <string name="app_name">Energy2Live</string>
     <string name="lbl_email">Enter your email address</string>
     <string name="lbl_password">Enter your password</string>
+    <string name="lbl_latest_activities">Your latest activities</string>
     <string name="btn_login">Login</string>
     <string name="btn_register">Register</string>
-    <string name="btn_new_track">Start New Track</string>
-    <string name="btn_add_activity">Add New Activity</string>
     <string name="main_actionbar_title">Energy2Live</string>
     <string name="settings_actionbar_title">Settings</string>
+    <string name="start_track_actionbar_title">Record New Activity</string>
+    <string name="add_new_actionbar_title">Add New Activity</string>
     <string name="menu_settings">Preferences</string>
     <string name="menu_about">About</string>
+    <string name="dialog_add_new_title">Add New Activity</string>
 
     <string name="actionbar_activity_not_found">Failed to open intent…</string>
 

@@ -20,10 +20,15 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import at.tugraz.kmi.energy2live.widget.ActionBar;
 import at.tugraz.kmi.energy2live.widget.ActionBar.IntentAction;
 
 public class E2LMainActivity extends Activity {
+	private ListView lastestActivitiesList;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -32,6 +37,10 @@ public class E2LMainActivity extends Activity {
 		ActionBar actionBar = (ActionBar) findViewById(R.id.main_actionbar);
 		actionBar.addAction(new IntentAction(this, Utils.createIntent(this, E2LSettingsActivity.class),
 				R.drawable.ic_action_settings));
+
+		lastestActivitiesList = (ListView) findViewById(R.id.latest_activities_list);
+		lastestActivitiesList.setAdapter(new ArrayAdapter<String>(this, R.layout.list_activities_item, new String[] {
+				"One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight" }));
 	}
 
 	@Override
@@ -53,5 +62,13 @@ public class E2LMainActivity extends Activity {
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+
+	public void recordNewActivityClicked(View v) {
+		startActivity(Utils.createIntent(this, E2LRecordNewActivity.class));
+	}
+
+	public void addNewActivityClicked(View v) {
+		startActivity(Utils.createIntent(this, E2LAddNewActivity.class));
 	}
 }

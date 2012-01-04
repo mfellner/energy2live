@@ -25,7 +25,51 @@
        android:id="@+id/main_actionbar"
        e2l:title="@string/main_actionbar_title"
        style="@style/ActionBar" />
-
+    
+    <LinearLayout
+        android:id="@+id/latest_activities_list_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/main_actionbar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:orientation="vertical" >
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:text="@string/lbl_latest_activities" />
+            <ImageButton
+                android:id="@+id/btn_new_activity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:background="@android:drawable/ic_input_add"
+                android:onClick="addNewActivityClicked" />
+            <ImageButton
+                android:id="@+id/btn_record_activity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/btn_new_activity"
+                android:layout_marginRight="10dp"
+                android:background="@android:drawable/ic_media_play"
+                android:onClick="recordNewActivityClicked" />
+        </RelativeLayout>
+        <ListView
+            android:id="@+id/latest_activities_list"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="vertical" >
+        </ListView>
+    </LinearLayout>
+<!--
     <Button
         android:id="@+id/btn_new_track"
         android:layout_width="fill_parent"
@@ -34,7 +78,8 @@
         android:layout_marginTop="130dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:text="@string/btn_new_track" />
+        android:text="@string/btn_new_track"
+        android:onClick="startNewTrackClicked" />
     
     <Button
         android:id="@+id/btn_add_activity"
@@ -45,6 +90,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:text="@string/btn_add_activity" />
-
+        android:text="@string/btn_add_activity"
+        android:onClick="addNewActivityClicked" />
+-->
 </RelativeLayout>
