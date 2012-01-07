@@ -9,5 +9,10 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/Energy2Live/lib/ormlite-android-4.31-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/ormlite-core-4.31.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/Energy2Live/lib/ormlite-core-4.31-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
