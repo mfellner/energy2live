@@ -13,26 +13,24 @@
  *  limitations under the License.
  */
 
-package at.tugraz.kmi.energy2live;
+package at.tugraz.kmi.energy2live.model.implementation;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
+import at.tugraz.kmi.energy2live.model.E2LActivity;
 
-public class Utils {
-	private Utils() {
-	};
+public class E2LActivityImplementation implements E2LActivity {
+	private String mActivityName;
 
-	/**
-	 * Creates an Intent for an activity.
-	 * 
-	 * @param context Context of the activity.
-	 * @param cl Class of the activity.
-	 * @return Intent for the activity.
-	 */
-	public static <T extends Activity> Intent createIntent(Context context, Class<T> cl) {
-		Intent i = new Intent(context, cl);
-		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		return i;
+	public E2LActivityImplementation(String name) {
+		mActivityName = name;
+	}
+
+	@Override
+	public void setName(String name) {
+		mActivityName = name;
+	}
+
+	@Override
+	public String getName() {
+		return mActivityName;
 	}
 }
