@@ -95,7 +95,7 @@ public class E2LMainActivity extends OrmLiteBaseActivity<E2LDatabaseHelper> impl
 	}
 
 	public void recordNewActivityClicked(View v) {
-		startActivity(Utils.createIntent(this, E2LRecordNewActivity.class));
+		startActivity(Utils.createIntent(this, E2LRecordActivity.class));
 	}
 
 	public void addNewActivityClicked(View v) {

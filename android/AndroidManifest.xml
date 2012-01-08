@@ -18,6 +18,7 @@
     android:versionName="1.0" >
 
     <uses-sdk android:minSdkVersion="8" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:icon="@drawable/ic_launcher"
@@ -31,21 +32,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".E2LMainActivity" >
-        </activity>
-        <activity
-            android:name=".E2LSettingsActivity" >
-        </activity>
-        <activity
-            android:name=".E2LRecordNewActivity" >
-        </activity>
-        <activity
-            android:name=".E2LAddNewActivity" >
-        </activity>
-        <activity
-            android:name=".E2LManageActivity" >
-        </activity>
+        <activity android:name=".E2LMainActivity" />
+        <activity android:name=".E2LSettingsActivity" />
+        <activity android:name=".E2LRecordActivity" />
+        <activity android:name=".E2LAddNewActivity" />
+        <activity android:name=".E2LManageActivity" />
+        <service android:name="at.tugraz.kmi.energy2live.location.E2LLocationService" android:exported="false" />
     </application>
 
 </manifest>

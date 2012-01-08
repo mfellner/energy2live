@@ -16,19 +16,40 @@
 package at.tugraz.kmi.energy2live;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ToggleButton;
+import at.tugraz.kmi.energy2live.location.E2LLocationService;
 import at.tugraz.kmi.energy2live.widget.ActionBar;
 import at.tugraz.kmi.energy2live.widget.ActionBar.IntentAction;
 
-public class E2LRecordNewActivity extends Activity {
+public class E2LRecordActivity extends Activity {
+	private ToggleButton btnRecordToggle;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_start_track);
+		setContentView(R.layout.activity_record);
 
-		ActionBar actionBar = (ActionBar) findViewById(R.id.start_track_actionbar);
+		ActionBar actionBar = (ActionBar) findViewById(R.id.record_actionbar);
 		actionBar.setHomeAction(new IntentAction(this, Utils.createIntent(this, E2LMainActivity.class),
 				R.drawable.ic_action_home));
+
+		btnRecordToggle = (ToggleButton) findViewById(R.id.btn_record_start_stop);
+		if (E2LLocationService.isRunning()) {
+			btnRecordToggle.setChecked(true);
+		}
 	}
 
+	// declared in xml
+	public void btnRecordStartStopClicked(View v) {
+		if (E2LLocationService.isRunning()) {
+			btnRecordToggle.setChecked(false);
+			stopService(new Intent(this, E2LLocationService.class));
+		} else {
+			btnRecordToggle.setChecked(true);
+			startService(new Intent(this, E2LLocationService.class));
+		}
+	}
 }

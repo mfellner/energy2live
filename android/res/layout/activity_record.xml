@@ -18,12 +18,25 @@
     xmlns:e2l="http://schemas.android.com/apk/res/at.tugraz.kmi.energy2live"
     android:id="@+id/main_relative_layout"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:layout_height="fill_parent" >
     
     <at.tugraz.kmi.energy2live.widget.ActionBar
-       android:id="@+id/start_track_actionbar"
-       e2l:title="@string/title_actionbar_start_track"
+       android:id="@+id/record_actionbar"
+       e2l:title="@string/title_actionbar_record"
        style="@style/ActionBar" />
+
+    <ToggleButton
+        android:id="@+id/btn_record_start_stop"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:checked="false"
+        android:onClick="btnRecordStartStopClicked"
+        android:textOn="@string/btn_record_stop"
+        android:textOff="@string/btn_record_start" />
 
 </RelativeLayout>
