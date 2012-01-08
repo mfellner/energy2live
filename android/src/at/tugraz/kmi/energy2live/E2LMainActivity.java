@@ -18,11 +18,13 @@ package at.tugraz.kmi.energy2live;
 import java.sql.SQLException;
 import java.util.List;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import at.tugraz.kmi.energy2live.database.E2LDatabaseHelper;
@@ -34,7 +36,7 @@ import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.QueryBuilder;
 
-public class E2LMainActivity extends OrmLiteBaseActivity<E2LDatabaseHelper> {
+public class E2LMainActivity extends OrmLiteBaseActivity<E2LDatabaseHelper> implements ListView.OnItemClickListener {
 	private static final long MAX_LATEST_ACTIVITIES = 10;
 	private ListView lastestActivitiesList;
 
@@ -48,6 +50,7 @@ public class E2LMainActivity extends OrmLiteBaseActivity<E2LDatabaseHelper> {
 				R.drawable.ic_action_settings));
 
 		lastestActivitiesList = (ListView) findViewById(R.id.latest_activities_list);
+		lastestActivitiesList.setOnItemClickListener(this);
 	}
 
 	@Override
@@ -78,6 +81,16 @@ public class E2LMainActivity extends OrmLiteBaseActivity<E2LDatabaseHelper> {
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
+		}
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		E2LActivityImplementation activity = (E2LActivityImplementation) parent.getItemAtPosition(position);
+		if (activity != null && activity.getId() != null) {
+			Intent intent = new Intent(this, E2LManageActivity.class);
+			intent.putExtra(E2LManageActivity.EXTRA_ACTIVITY_ID, activity.getId());
+			startActivity(intent);
 		}
 	}
 

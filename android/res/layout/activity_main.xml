@@ -23,7 +23,7 @@
     
     <at.tugraz.kmi.energy2live.widget.ActionBar
        android:id="@+id/main_actionbar"
-       e2l:title="@string/main_actionbar_title"
+       e2l:title="@string/title_actionbar_main"
        style="@style/ActionBar" />
     
     <LinearLayout

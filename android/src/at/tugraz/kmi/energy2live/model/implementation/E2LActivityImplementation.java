@@ -15,6 +15,9 @@
 
 package at.tugraz.kmi.energy2live.model.implementation;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import at.tugraz.kmi.energy2live.model.E2LActivity;
 
 import com.j256.ormlite.field.DatabaseField;
@@ -27,6 +30,14 @@ public class E2LActivityImplementation implements E2LActivity {
 
 	@DatabaseField
 	private String mName;
+
+	@DatabaseField
+	private Date mTime;
+
+	@DatabaseField
+	private long mDuration;
+
+	private final SimpleDateFormat sdfCompact = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
 	public E2LActivityImplementation() {
 
@@ -52,5 +63,34 @@ public class E2LActivityImplementation implements E2LActivity {
 	@Override
 	public String getName() {
 		return mName;
+	}
+
+	@Override
+	public String getDateTime() {
+		return sdfCompact.format(mTime.getTime());
+	}
+
+	public Date getTime() {
+		return mTime;
+	}
+
+	public void setTime(Date time) {
+		mTime = time;
+	}
+
+	public void setDuration(long duration) {
+		if (duration < 0)
+			throw new RuntimeException("negative duration");
+		mDuration = duration;
+	}
+
+	public long getDuration() {
+		return mDuration;
+	}
+
+	public boolean hasEmptyFields() {
+		if (mName == null || mName.length() == 0 || mTime == null || mDuration == 0)
+			return true;
+		return false;
 	}
 }

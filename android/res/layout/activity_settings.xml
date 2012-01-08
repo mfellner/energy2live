@@ -23,7 +23,7 @@
     
     <at.tugraz.kmi.energy2live.widget.ActionBar
        android:id="@+id/settings_actionbar"
-       e2l:title="@string/settings_actionbar_title"
+       e2l:title="@string/title_actionbar_settings"
        style="@style/ActionBar" />
 
 </RelativeLayout>

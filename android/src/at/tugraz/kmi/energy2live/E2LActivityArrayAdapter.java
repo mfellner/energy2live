@@ -29,18 +29,17 @@ public class E2LActivityArrayAdapter extends ArrayAdapter<E2LActivityImplementat
 		}
 
 		E2LActivityImplementation activity = getItem(position);
-
-		String name = activity.getName();
-		if (name == null) {
-			fillText(convertView, R.id.lst_activities_item_txt, "");
-		} else {
-			try {
-				dbHelper.getActivityDao().refresh(activity);
-			} catch (SQLException e) {
-				throw new RuntimeException(e);
-			}
-			fillText(convertView, R.id.lst_activities_item_txt, activity.getName());
+		try {
+			dbHelper.getActivityDao().refresh(activity);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
 		}
+
+		String name = activity.getName() != null ? activity.getName() : "<null>";
+		fillText(convertView, R.id.lst_activities_item_name, name);
+
+		String time = activity.getTime() != null ? Utils.SDF_READABLE.format(activity.getTime()) : "<null>";
+		fillText(convertView, R.id.lst_activities_item_time, time);
 
 		return convertView;
 	}

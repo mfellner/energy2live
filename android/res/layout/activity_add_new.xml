@@ -23,7 +23,7 @@
     
     <at.tugraz.kmi.energy2live.widget.ActionBar
        android:id="@+id/add_new_actionbar"
-       e2l:title="@string/add_new_actionbar_title"
+       e2l:title="@string/title_actionbar_add_new"
        style="@style/ActionBar" />
 
     <TextView
@@ -48,7 +48,29 @@
         android:layout_below="@+id/lbl_add_new_name" >
         <requestFocus />
     </EditText>
+    
+    <TextView
+        android:id="@+id/lbl_add_new_duration"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_below="@+id/txt_add_new_name"
+        android:text="@string/lbl_add_new_duration" />
 
+    <Button
+        android:id="@+id/btn_add_new_duration"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:onClick="buttonDurationClicked"
+        android:layout_below="@id/lbl_add_new_duration" />
+    
     <Button
         android:id="@+id/btn_add_new_add"
         android:layout_width="fill_parent"
