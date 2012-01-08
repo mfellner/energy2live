@@ -15,7 +15,9 @@
 
 package at.tugraz.kmi.energy2live;
 
-import android.app.Activity;
+import java.sql.SQLException;
+import java.util.List;
+
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,10 +25,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import at.tugraz.kmi.energy2live.database.E2LDatabaseHelper;
+import at.tugraz.kmi.energy2live.model.implementation.E2LActivityImplementation;
 import at.tugraz.kmi.energy2live.widget.ActionBar;
 import at.tugraz.kmi.energy2live.widget.ActionBar.IntentAction;
 
-public class E2LMainActivity extends Activity {
+import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.stmt.QueryBuilder;
+
+public class E2LMainActivity extends OrmLiteBaseActivity<E2LDatabaseHelper> {
+	private static final long MAX_LATEST_ACTIVITIES = 10;
 	private ListView lastestActivitiesList;
 
 	@Override
@@ -39,8 +48,16 @@ public class E2LMainActivity extends Activity {
 				R.drawable.ic_action_settings));
 
 		lastestActivitiesList = (ListView) findViewById(R.id.latest_activities_list);
-		lastestActivitiesList.setAdapter(new ArrayAdapter<String>(this, R.layout.list_activities_item, new String[] {
-				"One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight" }));
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		try {
+			populateViews();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override
@@ -70,5 +87,16 @@ public class E2LMainActivity extends Activity {
 
 	public void addNewActivityClicked(View v) {
 		startActivity(Utils.createIntent(this, E2LAddNewActivity.class));
+	}
+
+	private void populateViews() throws SQLException {
+		Dao<E2LActivityImplementation, Integer> dao = getHelper().getActivityDao();
+		QueryBuilder<E2LActivityImplementation, Integer> builder = dao.queryBuilder();
+		builder.limit(MAX_LATEST_ACTIVITIES);
+		// builder.orderBy(E2LActivityImplementation.DATE_FIELD_NAME, false).limit(30L);
+		List<E2LActivityImplementation> list = dao.query(builder.prepare());
+		ArrayAdapter<E2LActivityImplementation> arrayAdapter = new E2LActivityArrayAdapter(this,
+				R.layout.list_activities_row, list, getHelper());
+		lastestActivitiesList.setAdapter(arrayAdapter);
 	}
 }

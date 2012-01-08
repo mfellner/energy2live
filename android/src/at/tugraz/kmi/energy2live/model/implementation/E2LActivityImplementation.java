@@ -17,20 +17,40 @@ package at.tugraz.kmi.energy2live.model.implementation;
 
 import at.tugraz.kmi.energy2live.model.E2LActivity;
 
+import com.j256.ormlite.field.DatabaseField;
+
 public class E2LActivityImplementation implements E2LActivity {
-	private String mActivityName;
+	private static final long serialVersionUID = 5687427484069917585L;
+
+	@DatabaseField(generatedId = true)
+	private Integer mId;
+
+	@DatabaseField
+	private String mName;
+
+	public E2LActivityImplementation() {
+
+	}
 
 	public E2LActivityImplementation(String name) {
-		mActivityName = name;
+		mName = name;
+	}
+
+	public void setId(Integer id) {
+		mId = id;
+	}
+
+	public Integer getId() {
+		return mId;
 	}
 
 	@Override
 	public void setName(String name) {
-		mActivityName = name;
+		mName = name;
 	}
 
 	@Override
 	public String getName() {
-		return mActivityName;
+		return mName;
 	}
 }

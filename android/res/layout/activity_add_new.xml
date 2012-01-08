@@ -26,4 +26,39 @@
        e2l:title="@string/add_new_actionbar_title"
        style="@style/ActionBar" />
 
+    <TextView
+        android:id="@+id/lbl_add_new_name"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_below="@+id/add_new_actionbar"
+        android:text="@string/lbl_add_new_name" />
+
+    <EditText
+        android:id="@+id/txt_add_new_name"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_below="@+id/lbl_add_new_name" >
+        <requestFocus />
+    </EditText>
+
+    <Button
+        android:id="@+id/btn_add_new_add"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:onClick="addNewActivityClicked"
+        android:text="@string/btn_add_new_add" />
+
 </RelativeLayout>

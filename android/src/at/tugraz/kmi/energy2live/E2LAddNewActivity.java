@@ -15,12 +15,22 @@
 
 package at.tugraz.kmi.energy2live;
 
-import android.app.Activity;
+import java.sql.SQLException;
+
 import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
+import at.tugraz.kmi.energy2live.database.E2LDatabaseHelper;
+import at.tugraz.kmi.energy2live.model.implementation.E2LActivityImplementation;
 import at.tugraz.kmi.energy2live.widget.ActionBar;
 import at.tugraz.kmi.energy2live.widget.ActionBar.IntentAction;
 
-public class E2LAddNewActivity extends Activity {
+import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
+import com.j256.ormlite.dao.Dao;
+
+public class E2LAddNewActivity extends OrmLiteBaseActivity<E2LDatabaseHelper> {
+	private EditText txtName;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -29,5 +39,34 @@ public class E2LAddNewActivity extends Activity {
 		ActionBar actionBar = (ActionBar) findViewById(R.id.add_new_actionbar);
 		actionBar.setHomeAction(new IntentAction(this, Utils.createIntent(this, E2LMainActivity.class),
 				R.drawable.ic_action_home));
+
+		txtName = (EditText) findViewById(R.id.txt_add_new_name);
+	}
+
+	// declared in xml
+	public void addNewActivityClicked(View v) {
+		try {
+			E2LActivityImplementation activity = createActivityObject();
+			if (activity == null)
+				return;
+			Dao<E2LActivityImplementation, Integer> dao = getHelper().getActivityDao();
+			dao.create(activity);
+			// TODO: toast create successful
+			startActivity(Utils.createIntent(this, E2LMainActivity.class));
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private E2LActivityImplementation createActivityObject() {
+		String name = txtName.getText().toString();
+		if (name == null || name.length() == 0) {
+			// TODO: make toast
+			return null;
+		}
+
+		E2LActivityImplementation activity = new E2LActivityImplementation();
+		activity.setName(name);
+		return activity;
 	}
 }

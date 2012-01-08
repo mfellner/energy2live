@@ -28,8 +28,6 @@ public class E2LLoginActivity extends Activity {
 
 	// declared in xml
 	public void doLogin(View v) {
-		if (v.getId() != R.id.btn_login)
-			return;
 		// TODO: verify login
 		startActivity(Utils.createIntent(this, E2LMainActivity.class));
 		finish();
@@ -37,8 +35,6 @@ public class E2LLoginActivity extends Activity {
 
 	// declared in xml
 	public void doRegister(View v) {
-		if (v.getId() != R.id.btn_register)
-			return;
 		// TODO: perform registration
 	}
 }

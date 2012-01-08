@@ -18,8 +18,10 @@
     <string name="lbl_email">Enter your email address</string>
     <string name="lbl_password">Enter your password</string>
     <string name="lbl_latest_activities">Your latest activities</string>
+    <string name="lbl_add_new_name">Enter activity name</string>
     <string name="btn_login">Login</string>
     <string name="btn_register">Register</string>
+    <string name="btn_add_new_add">Add new activity</string>
     <string name="main_actionbar_title">Energy2Live</string>
     <string name="settings_actionbar_title">Settings</string>
     <string name="start_track_actionbar_title">Record New Activity</string>

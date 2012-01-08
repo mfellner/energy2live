@@ -15,7 +15,9 @@
 
 package at.tugraz.kmi.energy2live.model;
 
-public interface E2LActivity {
+import java.io.Serializable;
+
+public interface E2LActivity extends Serializable {
 	public void setName(String name);
 
 	public String getName();
