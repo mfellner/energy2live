@@ -48,7 +48,7 @@ public class E2LLocationService extends Service {
 		@Override
 		public void handleMessage(Message msg) {
 			// TODO do something
-			waitFor(1000 * 20);
+			waitFor(TIMEOUT);
 			// Stop the service using the startId, so that we don't stop
 			// the service in the middle of handling another job
 			stopSelf(msg.arg1);
@@ -90,13 +90,14 @@ public class E2LLocationService extends Service {
 
 		String activityName = "dummy activity"; // TODO get from intent
 		int icon = android.R.drawable.stat_notify_error; // TODO change icon
-		CharSequence tickerText = "Hello";
+		CharSequence tickerText = "Recording activity \"" + activityName + "\"";
 		long when = System.currentTimeMillis();
 		Context context = getApplicationContext();
 		CharSequence contentTitle = getResources().getString(R.string.app_name);
-		CharSequence contentText = "Recording activity \"" + activityName + "\"";
+		CharSequence contentText = tickerText;
 
 		Intent notificationIntent = new Intent(this, E2LRecordActivity.class);
+		notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
 		Notification notification = new Notification(icon, tickerText, when);

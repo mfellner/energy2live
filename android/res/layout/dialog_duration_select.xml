@@ -40,8 +40,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/spnnr_duration_hours"
-            android:layout_alignLeft="@id/spnnr_duration_hours"
-            android:text="hours" />
+            android:layout_alignRight="@id/spnnr_duration_hours"
+            android:layout_marginRight="10dp"
+            android:text="@string/hours" />
         
         <Spinner
             android:id="@+id/spnnr_duration_minutes"
@@ -56,9 +57,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/spnnr_duration_minutes"
-            android:layout_alignLeft="@id/spnnr_duration_minutes"
+            android:layout_alignRight="@id/spnnr_duration_minutes"
             android:layout_alignBaseline="@id/lbl_duration_hours"
-            android:text="minutes" />
+            android:layout_marginRight="10dp"
+            android:text="@string/minutes" />
     </RelativeLayout>
     <Button
         android:id="@+id/btn_duration_select"

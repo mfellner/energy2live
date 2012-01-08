@@ -38,8 +38,10 @@ public class E2LDialogDurationSelect extends Dialog implements View.OnClickListe
 		spnnrHours.setSelection(0);
 		spnnrMinutes.setSelection(0);
 
-		spnnrHours.setAdapter(new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, mHoursArray));
-		spnnrMinutes.setAdapter(new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, mMinutesArray));
+		spnnrHours.setAdapter(new ArrayAdapter<String>(context, android.R.layout.simple_dropdown_item_1line,
+				mHoursArray));
+		spnnrMinutes.setAdapter(new ArrayAdapter<String>(context, android.R.layout.simple_dropdown_item_1line,
+				mMinutesArray));
 	}
 
 	@Override
