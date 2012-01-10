@@ -17,6 +17,7 @@ package at.tugraz.kmi.energy2live;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ToggleButton;
@@ -24,7 +25,7 @@ import at.tugraz.kmi.energy2live.location.E2LLocationService;
 import at.tugraz.kmi.energy2live.widget.ActionBar;
 import at.tugraz.kmi.energy2live.widget.ActionBar.IntentAction;
 
-public class E2LRecordActivity extends Activity {
+public class E2LRecordActivity extends Activity implements E2LLocationService.Callback {
 	private ToggleButton btnRecordToggle;
 
 	@Override
@@ -37,9 +38,18 @@ public class E2LRecordActivity extends Activity {
 				R.drawable.ic_action_home));
 
 		btnRecordToggle = (ToggleButton) findViewById(R.id.btn_record_start_stop);
+
+		E2LLocationService.addCallback(this);
+
 		if (E2LLocationService.isRunning()) {
 			btnRecordToggle.setChecked(true);
 		}
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		E2LLocationService.removeCallback(this);
 	}
 
 	// declared in xml
@@ -50,6 +60,19 @@ public class E2LRecordActivity extends Activity {
 		} else {
 			btnRecordToggle.setChecked(true);
 			startService(new Intent(this, E2LLocationService.class));
+		}
+	}
+
+	@Override
+	public void onNewLocationFound(Location location) {
+
+	}
+
+	@Override
+	public void onLocationServiceStop(boolean serviceStoppedItself) {
+		if (serviceStoppedItself) {
+			btnRecordToggle.setChecked(false);
+			// TODO do stuff
 		}
 	}
 }
