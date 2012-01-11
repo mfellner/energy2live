@@ -24,6 +24,16 @@
        android:id="@+id/record_actionbar"
        e2l:title="@string/title_actionbar_record"
        style="@style/ActionBar" />
+    
+    <com.google.android.maps.MapView
+        android:id="@+id/record_mapview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/record_actionbar"
+        android:layout_above="@+id/btn_record_start_stop"
+        android:apiKey="0hypPmrMg3itDPk2gbCJQjJLpOcJh_kFQoYzNiQ"
+        android:clickable="true" />
+    <!-- TODO replace debug token in release version -->
 
     <ToggleButton
         android:id="@+id/btn_record_start_stop"
@@ -33,7 +43,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="1dp"
+        android:layout_marginTop="5dp"
         android:checked="false"
         android:onClick="btnRecordStartStopClicked"
         android:textOn="@string/btn_record_stop"

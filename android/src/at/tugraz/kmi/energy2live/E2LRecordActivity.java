@@ -15,18 +15,30 @@
 
 package at.tugraz.kmi.energy2live;
 
-import android.app.Activity;
+import java.util.List;
+
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ToggleButton;
 import at.tugraz.kmi.energy2live.location.E2LLocationService;
+import at.tugraz.kmi.energy2live.location.E2LMapOverlay;
 import at.tugraz.kmi.energy2live.widget.ActionBar;
 import at.tugraz.kmi.energy2live.widget.ActionBar.IntentAction;
 
-public class E2LRecordActivity extends Activity implements E2LLocationService.Callback {
+import com.google.android.maps.GeoPoint;
+import com.google.android.maps.MapActivity;
+import com.google.android.maps.MapView;
+import com.google.android.maps.Overlay;
+import com.google.android.maps.OverlayItem;
+
+public class E2LRecordActivity extends MapActivity implements E2LLocationService.Callback {
 	private ToggleButton btnRecordToggle;
+	private MapView mMapView;
+	private List<Overlay> mMapOverlays;
+	private E2LMapOverlay mItemizedOverlay;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -36,6 +48,12 @@ public class E2LRecordActivity extends Activity implements E2LLocationService.Ca
 		ActionBar actionBar = (ActionBar) findViewById(R.id.record_actionbar);
 		actionBar.setHomeAction(new IntentAction(this, Utils.createIntent(this, E2LMainActivity.class),
 				R.drawable.ic_action_home));
+
+		mMapView = (MapView) findViewById(R.id.record_mapview);
+		mMapView.setBuiltInZoomControls(true);
+		mMapOverlays = mMapView.getOverlays();
+		Drawable drawable = this.getResources().getDrawable(R.drawable.ic_androidmarker);
+		mItemizedOverlay = new E2LMapOverlay(drawable, this);
 
 		btnRecordToggle = (ToggleButton) findViewById(R.id.btn_record_start_stop);
 
@@ -65,7 +83,14 @@ public class E2LRecordActivity extends Activity implements E2LLocationService.Ca
 
 	@Override
 	public void onNewLocationFound(Location location) {
-
+		int latitude = (int) Math.round(location.getLatitude() * 1E6f);
+		int longitude = (int) Math.round(location.getLongitude() * 1E6f);
+		GeoPoint point = new GeoPoint(latitude, longitude);
+		OverlayItem overlayitem = new OverlayItem(point, "Yes,", "this is dog!");
+		mItemizedOverlay.addOverlay(overlayitem);
+		mMapOverlays.clear();
+		mMapOverlays.add(mItemizedOverlay);
+		mMapView.postInvalidate();
 	}
 
 	@Override
@@ -74,5 +99,10 @@ public class E2LRecordActivity extends Activity implements E2LLocationService.Ca
 			btnRecordToggle.setChecked(false);
 			// TODO do stuff
 		}
+	}
+
+	@Override
+	protected boolean isRouteDisplayed() {
+		return false;
 	}
 }
