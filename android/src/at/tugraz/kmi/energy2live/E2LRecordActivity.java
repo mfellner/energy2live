@@ -17,7 +17,10 @@ package at.tugraz.kmi.energy2live;
 
 import java.util.List;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
@@ -73,8 +76,22 @@ public class E2LRecordActivity extends MapActivity implements E2LLocationService
 	// declared in xml
 	public void btnRecordStartStopClicked(View v) {
 		if (E2LLocationService.isRunning()) {
-			btnRecordToggle.setChecked(false);
-			stopService(new Intent(this, E2LLocationService.class));
+			Resources res = getResources();
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage(res.getString(R.string.msg_stop_recording)).setCancelable(false)
+					.setPositiveButton(res.getString(R.string.yes), new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int id) {
+							btnRecordToggle.setChecked(false);
+							stopService(new Intent(E2LRecordActivity.this, E2LLocationService.class));
+						}
+					}).setNegativeButton(res.getString(R.string.no), new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int id) {
+							dialog.cancel();
+						}
+					});
+			builder.create().show();
 		} else {
 			btnRecordToggle.setChecked(true);
 			startService(new Intent(this, E2LLocationService.class));
@@ -94,10 +111,11 @@ public class E2LRecordActivity extends MapActivity implements E2LLocationService
 	}
 
 	@Override
-	public void onLocationServiceStop(boolean serviceStoppedItself) {
+	public void onLocationServiceStop(boolean serviceStoppedItself, List<Location> locations) {
 		if (serviceStoppedItself) {
 			btnRecordToggle.setChecked(false);
-			// TODO do stuff
+		} else {
+
 		}
 	}
 

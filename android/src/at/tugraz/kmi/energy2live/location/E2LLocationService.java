@@ -16,6 +16,7 @@
 package at.tugraz.kmi.energy2live.location;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import android.app.Notification;
@@ -41,22 +42,28 @@ import at.tugraz.kmi.energy2live.R;
 
 public class E2LLocationService extends Service implements LocationListener {
 	private static final int NOTIFICATION_ID = 1;
-	private static final int MIN_TIME_DELTA = 60000; // ms
-	private static final int MIN_DIST_DELTA = 100; // m
+	private static final int MAX_ACCELERATION = 30; // m/s
+	private static final int MAX_SPEED = 80; // m/s
 
+	private final int mMinTimeDelta = 10000; // ms
+	private final int mMinDistDelta = 100; // m
+
+	private final Object lock = new Object();
 	private static boolean RUNNING;
 	private boolean mStoppedMyself;
 	private int mStartId;
-	private Location mLastLocation;
 	private ServiceHandler mServiceHandler;
 	private NotificationManager mNotificationManager;
 	private LocationManager mLocationManager;
+	private List<Location> mLocations;
+	private int mAverageSpeed;
 	private static List<Callback> CALLBACKS;
 
 	private final class ServiceHandler extends Handler {
 		static final int MSG_STOP = 0;
 		static final int MSG_REQUEST_LOCATION_UPDATES = 1;
 		static final int MSG_PAUSE_LOCATION_UPDATES = 2;
+		static final int MSG_ON_LOCATION_CHANGED = 3;
 
 		public ServiceHandler(Looper looper) {
 			super(looper);
@@ -69,12 +76,25 @@ public class E2LLocationService extends Service implements LocationListener {
 				mLocationManager.removeUpdates(E2LLocationService.this);
 				mStoppedMyself = true;
 				stopSelf(mStartId);
+				sleep();
 				break;
 			case MSG_REQUEST_LOCATION_UPDATES:
 				mLocationManager.removeUpdates(E2LLocationService.this);
 				mLocationManager.requestLocationUpdates((String) msg.obj, msg.arg1, msg.arg2, E2LLocationService.this);
+				sleep();
 				break;
 			case MSG_PAUSE_LOCATION_UPDATES:
+				sleep();
+				break;
+			case MSG_ON_LOCATION_CHANGED:
+				Location location = (Location) msg.obj;
+				if (calculateNewAverages(location)) {
+					mLocations.add(location);
+					for (int i = 0; i < CALLBACKS.size(); i++) {
+						CALLBACKS.get(i).onNewLocationFound(location);
+					}
+				}
+				sleep();
 				break;
 			}
 		}
@@ -83,7 +103,7 @@ public class E2LLocationService extends Service implements LocationListener {
 	public interface Callback {
 		public void onNewLocationFound(Location location);
 
-		public void onLocationServiceStop(boolean serviceStoppedItself);
+		public void onLocationServiceStop(boolean serviceStoppedItself, List<Location> locations);
 	}
 
 	public static void addCallback(Callback callback) {
@@ -109,6 +129,7 @@ public class E2LLocationService extends Service implements LocationListener {
 		mServiceHandler = new ServiceHandler(thread.getLooper());
 		mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+		mLocations = Collections.synchronizedList(new ArrayList<Location>(10));
 	}
 
 	@Override
@@ -138,12 +159,126 @@ public class E2LLocationService extends Service implements LocationListener {
 		Message msg = mServiceHandler.obtainMessage();
 		msg.what = ServiceHandler.MSG_REQUEST_LOCATION_UPDATES;
 		msg.obj = LocationManager.NETWORK_PROVIDER;
-		msg.arg1 = MIN_TIME_DELTA;
-		msg.arg2 = MIN_DIST_DELTA;
+		msg.arg1 = mMinTimeDelta;
+		msg.arg2 = mMinDistDelta;
 		mServiceHandler.sendMessage(msg);
 
 		// if we get killed, after returning from here, restart
 		return START_STICKY;
+	}
+
+	@Override
+	public IBinder onBind(Intent intent) {
+		return null;
+	}
+
+	@Override
+	public void onDestroy() {
+		RUNNING = false;
+		lock.notify();
+		mServiceHandler.sendEmptyMessage(-1);
+		mNotificationManager.cancel(NOTIFICATION_ID);
+		for (int i = 0; i < CALLBACKS.size(); i++) {
+			CALLBACKS.get(i).onLocationServiceStop(mStoppedMyself, mLocations);
+		}
+	}
+
+	@Override
+	public void onLocationChanged(Location location) {
+		lock.notify();
+		Log.d("Energy2Live", "Location found lat:" + location.getLatitude() + " long:" + location.getLongitude());
+		Message msg = mServiceHandler.obtainMessage();
+		msg.what = ServiceHandler.MSG_ON_LOCATION_CHANGED;
+		msg.obj = location;
+		mServiceHandler.sendMessage(msg);
+	}
+
+	@Override
+	public void onProviderDisabled(String provider) {
+		lock.notify();
+		String otherProvider = oppositeProviderOf(provider);
+		if (mLocationManager.isProviderEnabled(otherProvider)) {
+			Message msg = mServiceHandler.obtainMessage();
+			msg.what = ServiceHandler.MSG_REQUEST_LOCATION_UPDATES;
+			msg.obj = otherProvider;
+			msg.arg1 = mMinTimeDelta;
+			msg.arg2 = mMinDistDelta;
+			mServiceHandler.sendMessage(msg);
+		} else {
+			// TODO make toast
+			mServiceHandler.sendEmptyMessage(ServiceHandler.MSG_STOP);
+		}
+	}
+
+	@Override
+	public void onProviderEnabled(String provider) {
+		lock.notify();
+		if (provider.equals(LocationManager.GPS_PROVIDER)) {
+			Message msg = mServiceHandler.obtainMessage();
+			msg.what = ServiceHandler.MSG_REQUEST_LOCATION_UPDATES;
+			msg.obj = LocationManager.GPS_PROVIDER;
+			msg.arg1 = mMinTimeDelta;
+			msg.arg2 = mMinDistDelta;
+			mServiceHandler.sendMessage(msg);
+		}
+	}
+
+	@Override
+	public void onStatusChanged(String provider, int status, Bundle extras) {
+		lock.notify();
+		switch (status) {
+		case LocationProvider.AVAILABLE:
+			switchToProvider(LocationManager.GPS_PROVIDER);
+			break;
+		case LocationProvider.TEMPORARILY_UNAVAILABLE:
+			if (provider.equals(LocationManager.GPS_PROVIDER)
+					&& mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+				switchToProvider(LocationManager.NETWORK_PROVIDER);
+			} else {
+				mServiceHandler.sendEmptyMessage(ServiceHandler.MSG_PAUSE_LOCATION_UPDATES);
+			}
+			break;
+		case LocationProvider.OUT_OF_SERVICE:
+			if (provider.equals(LocationManager.GPS_PROVIDER)
+					&& mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+				switchToProvider(LocationManager.NETWORK_PROVIDER);
+			} else {
+
+			}
+			break;
+		}
+	}
+
+	private void switchToProvider(String provider) {
+		Message msg = mServiceHandler.obtainMessage();
+		msg.what = ServiceHandler.MSG_REQUEST_LOCATION_UPDATES;
+		msg.obj = provider;
+		msg.arg1 = mMinTimeDelta;
+		msg.arg2 = mMinDistDelta;
+		mServiceHandler.sendMessage(msg);
+	}
+
+	private boolean calculateNewAverages(Location loc0) {
+		int n = mLocations.size();
+		if (n < 3)
+			return true;
+
+		Location loc1 = mLocations.get(n - 1);
+		Location loc2 = mLocations.get(n - 2);
+		Location loc3 = mLocations.get(n - 3);
+
+		long dt = Math.round((loc0.getTime() - loc1.getTime()) / 1000f);
+		if (dt == 0)
+			dt = 1;
+		int ds = Math.round(loc0.distanceTo(loc1));
+		int v = Math.round(ds / dt); // velocity m/s
+
+		if (Math.abs(mAverageSpeed - v) > MAX_ACCELERATION || v > MAX_SPEED)
+			return false;
+
+		mAverageSpeed = Math.round((loc0.getTime() + loc1.getTime() + loc2.getTime() + loc3.getTime()) / 4f);
+
+		return true;
 	}
 
 	private String oppositeProviderOf(String provider) {
@@ -155,73 +290,12 @@ public class E2LLocationService extends Service implements LocationListener {
 		return null;
 	}
 
-	@Override
-	public IBinder onBind(Intent intent) {
-		return null;
-	}
-
-	@Override
-	public void onDestroy() {
-		RUNNING = false;
-		mNotificationManager.cancel(NOTIFICATION_ID);
-		for (int i = 0; i < CALLBACKS.size(); i++) {
-			CALLBACKS.get(i).onLocationServiceStop(mStoppedMyself);
+	private void sleep() {
+		synchronized (lock) {
+			try {
+				lock.wait();
+			} catch (Exception e) {
+			}
 		}
 	}
-
-	@Override
-	public void onLocationChanged(Location location) {
-		Log.d("Energy2Live", "Location found lat:" + location.getLatitude() + " long:" + location.getLongitude());
-		mLastLocation = location;
-		for (int i = 0; i < CALLBACKS.size(); i++) {
-			CALLBACKS.get(i).onNewLocationFound(location);
-		}
-	}
-
-	@Override
-	public void onProviderDisabled(String provider) {
-		String otherProvider = oppositeProviderOf(provider);
-		if (mLocationManager.isProviderEnabled(otherProvider)) {
-			Message msg = mServiceHandler.obtainMessage();
-			msg.what = ServiceHandler.MSG_REQUEST_LOCATION_UPDATES;
-			msg.obj = otherProvider;
-			mServiceHandler.sendMessage(msg);
-		} else {
-			// TODO make toast
-			mServiceHandler.sendEmptyMessage(ServiceHandler.MSG_STOP);
-		}
-	}
-
-	@Override
-	public void onProviderEnabled(String provider) {
-		if (provider.equals(LocationManager.GPS_PROVIDER)) {
-			Message msg = mServiceHandler.obtainMessage();
-			msg.what = ServiceHandler.MSG_REQUEST_LOCATION_UPDATES;
-			msg.obj = LocationManager.GPS_PROVIDER;
-			mServiceHandler.sendMessage(msg);
-		}
-	}
-
-	@Override
-	public void onStatusChanged(String provider, int status, Bundle extras) {
-		switch (status) {
-		case LocationProvider.AVAILABLE:
-			break;
-		case LocationProvider.TEMPORARILY_UNAVAILABLE:
-			break;
-		case LocationProvider.OUT_OF_SERVICE:
-			break;
-		}
-	}
-	// private void waitFor(long millis) {
-	// long endTime = System.currentTimeMillis() + millis;
-	// while (System.currentTimeMillis() < endTime) {
-	// synchronized (this) {
-	// try {
-	// wait(endTime - System.currentTimeMillis());
-	// } catch (Exception e) {
-	// }
-	// }
-	// }
-	// }
 }
