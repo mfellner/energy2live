@@ -48,7 +48,6 @@ public class E2LLocationService extends Service implements LocationListener {
 	private final int mMinTimeDelta = 10000; // ms
 	private final int mMinDistDelta = 100; // m
 
-	private final Object lock = new Object();
 	private static boolean RUNNING;
 	private boolean mStoppedMyself;
 	private int mStartId;
@@ -60,6 +59,7 @@ public class E2LLocationService extends Service implements LocationListener {
 	private static List<Callback> CALLBACKS;
 
 	private final class ServiceHandler extends Handler {
+		private final Object lock;
 		static final int MSG_STOP = 0;
 		static final int MSG_REQUEST_LOCATION_UPDATES = 1;
 		static final int MSG_PAUSE_LOCATION_UPDATES = 2;
@@ -67,6 +67,7 @@ public class E2LLocationService extends Service implements LocationListener {
 
 		public ServiceHandler(Looper looper) {
 			super(looper);
+			lock = new Object();
 		}
 
 		@Override
@@ -96,6 +97,24 @@ public class E2LLocationService extends Service implements LocationListener {
 				}
 				sleep();
 				break;
+			}
+		}
+
+		private void sleep() {
+			synchronized (lock) {
+				try {
+					wait();
+				} catch (Exception e) {
+				}
+			}
+		}
+
+		public void wakeUp() {
+			synchronized (lock) {
+				try {
+					lock.notify();
+				} catch (Exception e) {
+				}
 			}
 		}
 	}
@@ -175,7 +194,7 @@ public class E2LLocationService extends Service implements LocationListener {
 	@Override
 	public void onDestroy() {
 		RUNNING = false;
-		lock.notify();
+		mServiceHandler.wakeUp();
 		mServiceHandler.sendEmptyMessage(-1);
 		mNotificationManager.cancel(NOTIFICATION_ID);
 		for (int i = 0; i < CALLBACKS.size(); i++) {
@@ -185,7 +204,7 @@ public class E2LLocationService extends Service implements LocationListener {
 
 	@Override
 	public void onLocationChanged(Location location) {
-		lock.notify();
+		mServiceHandler.wakeUp();
 		Log.d("Energy2Live", "Location found lat:" + location.getLatitude() + " long:" + location.getLongitude());
 		Message msg = mServiceHandler.obtainMessage();
 		msg.what = ServiceHandler.MSG_ON_LOCATION_CHANGED;
@@ -195,7 +214,7 @@ public class E2LLocationService extends Service implements LocationListener {
 
 	@Override
 	public void onProviderDisabled(String provider) {
-		lock.notify();
+		mServiceHandler.wakeUp();
 		String otherProvider = oppositeProviderOf(provider);
 		if (mLocationManager.isProviderEnabled(otherProvider)) {
 			Message msg = mServiceHandler.obtainMessage();
@@ -212,7 +231,7 @@ public class E2LLocationService extends Service implements LocationListener {
 
 	@Override
 	public void onProviderEnabled(String provider) {
-		lock.notify();
+		mServiceHandler.wakeUp();
 		if (provider.equals(LocationManager.GPS_PROVIDER)) {
 			Message msg = mServiceHandler.obtainMessage();
 			msg.what = ServiceHandler.MSG_REQUEST_LOCATION_UPDATES;
@@ -225,7 +244,7 @@ public class E2LLocationService extends Service implements LocationListener {
 
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
-		lock.notify();
+		mServiceHandler.wakeUp();
 		switch (status) {
 		case LocationProvider.AVAILABLE:
 			switchToProvider(LocationManager.GPS_PROVIDER);
@@ -288,14 +307,5 @@ public class E2LLocationService extends Service implements LocationListener {
 			return LocationManager.NETWORK_PROVIDER;
 		}
 		return null;
-	}
-
-	private void sleep() {
-		synchronized (lock) {
-			try {
-				lock.wait();
-			} catch (Exception e) {
-			}
-		}
 	}
 }
