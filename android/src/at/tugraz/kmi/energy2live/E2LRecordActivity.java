@@ -88,6 +88,7 @@ public class E2LRecordActivity extends MapActivity implements E2LLocationService
 					}).setNegativeButton(res.getString(R.string.no), new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int id) {
+							btnRecordToggle.setChecked(true);
 							dialog.cancel();
 						}
 					});
