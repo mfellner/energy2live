@@ -25,16 +25,31 @@
        e2l:title="@string/title_actionbar_record"
        style="@style/ActionBar" />
     
-    <com.google.android.maps.MapView
-        android:id="@+id/record_mapview"
+    <TextView
+        android:id="@+id/lbl_record_name"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_below="@id/record_actionbar"
-        android:layout_above="@+id/btn_record_start_stop"
-        android:apiKey="0hypPmrMg3itDPk2gbCJQjJLpOcJh_kFQoYzNiQ"
-        android:clickable="true" />
-    <!-- TODO replace debug token in release version -->
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_below="@+id/record_actionbar"
+        android:text="@string/lbl_add_new_name" />
 
+    <EditText
+        android:id="@+id/txt_record_name"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_below="@+id/lbl_record_name"
+        android:maxLines="1" >
+        <requestFocus />
+    </EditText>
+    
+    
     <ToggleButton
         android:id="@+id/btn_record_start_stop"
         android:layout_width="fill_parent"

@@ -16,7 +16,6 @@
 package at.tugraz.kmi.energy2live.location;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import android.app.Notification;
@@ -54,7 +53,7 @@ public class E2LLocationService extends Service implements LocationListener {
 	private ServiceHandler mServiceHandler;
 	private NotificationManager mNotificationManager;
 	private LocationManager mLocationManager;
-	private List<Location> mLocations;
+	private ArrayList<Location> mLocations;
 	private int mAverageSpeed;
 	private static List<Callback> CALLBACKS;
 
@@ -122,7 +121,7 @@ public class E2LLocationService extends Service implements LocationListener {
 	public interface Callback {
 		public void onNewLocationFound(Location location);
 
-		public void onLocationServiceStop(boolean serviceStoppedItself, List<Location> locations);
+		public void onLocationServiceStop(boolean serviceStoppedItself, ArrayList<Location> locations);
 	}
 
 	public static void addCallback(Callback callback) {
@@ -148,7 +147,7 @@ public class E2LLocationService extends Service implements LocationListener {
 		mServiceHandler = new ServiceHandler(thread.getLooper());
 		mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-		mLocations = Collections.synchronizedList(new ArrayList<Location>(10));
+		mLocations = new ArrayList<Location>(10);
 	}
 
 	@Override
