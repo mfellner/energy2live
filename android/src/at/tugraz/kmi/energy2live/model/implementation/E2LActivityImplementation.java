@@ -15,11 +15,12 @@
 
 package at.tugraz.kmi.energy2live.model.implementation;
 
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import at.tugraz.kmi.energy2live.model.E2LActivity;
 
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 
 public class E2LActivityImplementation implements E2LActivity {
@@ -37,7 +38,8 @@ public class E2LActivityImplementation implements E2LActivity {
 	@DatabaseField
 	private long mDuration;
 
-	private final SimpleDateFormat sdfCompact = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+	@DatabaseField(dataType = DataType.SERIALIZABLE)
+	private ArrayList<E2LActivityLocationImplementation> mLocations;
 
 	public E2LActivityImplementation() {
 
@@ -47,17 +49,12 @@ public class E2LActivityImplementation implements E2LActivity {
 		mName = name;
 	}
 
-	public void setId(Integer id) {
-		mId = id;
-	}
-
 	public Integer getId() {
 		return mId;
 	}
 
-	@Override
-	public void setName(String name) {
-		mName = name;
+	public void setId(Integer id) {
+		mId = id;
 	}
 
 	@Override
@@ -66,30 +63,45 @@ public class E2LActivityImplementation implements E2LActivity {
 	}
 
 	@Override
-	public String getDateTime() {
-		return sdfCompact.format(mTime.getTime());
+	public void setName(String name) {
+		mName = name;
 	}
 
-	public Date getTime() {
-		return mTime;
-	}
-
+	@Override
 	public void setTime(Date time) {
 		mTime = time;
 	}
 
+	@Override
+	public Date getTime() {
+		return mTime;
+	}
+
+	@Override
+	public long getDuration() {
+		return mDuration;
+	}
+
+	@Override
 	public void setDuration(long duration) {
 		if (duration < 0)
 			throw new RuntimeException("negative duration");
 		mDuration = duration;
 	}
 
-	public long getDuration() {
-		return mDuration;
+	@Override
+	public ArrayList<E2LActivityLocationImplementation> getLocations() {
+		return mLocations;
+	}
+
+	@Override
+	public void setLocations(ArrayList<E2LActivityLocationImplementation> locations) {
+		mLocations = locations;
 	}
 
 	public boolean hasEmptyFields() {
-		if (mName == null || mName.length() == 0 || mTime == null || mDuration == 0)
+		if (mName == null || mName.length() == 0 || mTime == null || mDuration == 0 || mLocations == null
+				|| mLocations.size() == 0)
 			return true;
 		return false;
 	}

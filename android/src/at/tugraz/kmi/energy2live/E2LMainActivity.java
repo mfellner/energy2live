@@ -18,6 +18,8 @@ package at.tugraz.kmi.energy2live;
 import java.sql.SQLException;
 import java.util.List;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -39,6 +41,7 @@ import com.j256.ormlite.stmt.QueryBuilder;
 public class E2LMainActivity extends OrmLiteBaseActivity<E2LDatabaseHelper> implements ListView.OnItemClickListener {
 	private static final long MAX_LATEST_ACTIVITIES = 10;
 	private ListView lastestActivitiesList;
+	private AlertDialog.Builder aboutDialogBuilder;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -51,7 +54,32 @@ public class E2LMainActivity extends OrmLiteBaseActivity<E2LDatabaseHelper> impl
 
 		lastestActivitiesList = (ListView) findViewById(R.id.latest_activities_list);
 		lastestActivitiesList.setOnItemClickListener(this);
+
+		// testSerialize();
 	}
+
+	// private void testSerialize() {
+	// Log.d("E2L", "Try serializing point...");
+	// XStream xstream = new XStream();
+	// xstream.alias(E2LPointImplementation.class.toString(), E2LPointImplementation.class);
+	// Point point = new E2LPointImplementation(422.223, 224.332);
+	// String xml = xstream.toXML(point);
+	// Log.d("E2L", "XML:\n" + xml);
+	//
+	// try {
+	// File file = new File(getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "point.xml");
+	// Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
+	// out.write(xml);
+	// out.close();
+	// Log.d("E2L", "Saved xml file");
+	// } catch (IOException e) {
+	// Log.e("E2L", "Failed saving xml file\n", e);
+	// }
+	//
+	// Point restoredPoint = (Point) xstream.fromXML(xml);
+	// Log.d("E2L", "Deserialized point: " + restoredPoint.getLatitude() + "/" +
+	// restoredPoint.getLongitude());
+	// }
 
 	@Override
 	protected void onResume() {
@@ -77,7 +105,7 @@ public class E2LMainActivity extends OrmLiteBaseActivity<E2LDatabaseHelper> impl
 			startActivity(Utils.createIntent(this, E2LSettingsActivity.class));
 			return true;
 		case R.id.menu_about:
-			// TODO: show about dialog
+			showAboutDialog();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -111,5 +139,20 @@ public class E2LMainActivity extends OrmLiteBaseActivity<E2LDatabaseHelper> impl
 		ArrayAdapter<E2LActivityImplementation> arrayAdapter = new E2LActivityArrayAdapter(this,
 				R.layout.list_activities_row, list, getHelper());
 		lastestActivitiesList.setAdapter(arrayAdapter);
+	}
+
+	private void showAboutDialog() {
+		if (aboutDialogBuilder == null) {
+			aboutDialogBuilder = new AlertDialog.Builder(this);
+			aboutDialogBuilder.setTitle(R.string.dialog_about_title).setMessage(R.string.dialog_about_message)
+					.setIcon(R.drawable.ic_launcher)
+					.setNeutralButton(R.string.dialog_about_button, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int id) {
+							dialog.cancel();
+						}
+					});
+		}
+		aboutDialogBuilder.create().show();
 	}
 }

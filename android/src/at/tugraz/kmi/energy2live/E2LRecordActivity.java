@@ -16,6 +16,8 @@
 package at.tugraz.kmi.energy2live;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -28,6 +30,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ToggleButton;
 import at.tugraz.kmi.energy2live.location.E2LLocationService;
+import at.tugraz.kmi.energy2live.model.E2LActivity;
+import at.tugraz.kmi.energy2live.model.implementation.E2LActivityImplementation;
+import at.tugraz.kmi.energy2live.model.implementation.E2LActivityLocationImplementation;
 import at.tugraz.kmi.energy2live.widget.ActionBar;
 import at.tugraz.kmi.energy2live.widget.ActionBar.IntentAction;
 
@@ -96,9 +101,24 @@ public class E2LRecordActivity extends Activity implements E2LLocationService.Ca
 		if (serviceStoppedItself) {
 			btnRecordToggle.setChecked(false);
 		} else {
+			E2LActivity activity = new E2LActivityImplementation();
+			activity.setName(txtName.getText().toString());
+			long startTime = locations.get(0).getTime();
+			activity.setTime(new Date(startTime));
+			activity.setDuration(Calendar.getInstance().getTimeInMillis() - startTime);
+
+			ArrayList<E2LActivityLocationImplementation> e2lLocations = new ArrayList<E2LActivityLocationImplementation>(
+					locations.size());
+			for (int i = 0; i < locations.size(); i++) {
+				e2lLocations.add(new E2LActivityLocationImplementation(locations.get(i)));
+			}
+			activity.setLocations(e2lLocations);
+
 			Intent intent = new Intent(this, E2LManageActivity.class);
-			intent.putExtra(E2LManageActivity.EXTRA_ACTIVITY_NAME, txtName.getText().toString());
-			intent.putParcelableArrayListExtra(E2LManageActivity.EXTRA_LOCATIONS, locations);
+			intent.putExtra(E2LManageActivity.EXTRA_ACTIVITY, activity);
+			// intent.putExtra(E2LManageActivity.EXTRA_ACTIVITY_NAME, txtName.getText().toString());
+			// intent.putParcelableArrayListExtra(E2LManageActivity.EXTRA_LOCATIONS, locations);
+
 			startActivity(intent);
 			finish();
 		}

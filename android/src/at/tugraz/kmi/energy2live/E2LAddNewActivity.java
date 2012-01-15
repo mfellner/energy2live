@@ -66,7 +66,6 @@ public class E2LAddNewActivity extends OrmLiteBaseActivity<E2LDatabaseHelper> im
 			String text = h > 0 ? Integer.toString(h) + " " + hText + ", " : "";
 			text += Integer.toString(m) + " " + mText;
 			btnDuration.setText(text);
-
 			long milliseconds = (h * 3600000) + (m * 60000);
 			mActivity.setDuration(milliseconds);
 		}
@@ -79,6 +78,7 @@ public class E2LAddNewActivity extends OrmLiteBaseActivity<E2LDatabaseHelper> im
 				return;
 			Dao<E2LActivityImplementation, Integer> dao = getHelper().getActivityDao();
 			dao.create(mActivity);
+			dao.refresh(mActivity);
 			// TODO: toast create successful
 			startActivity(Utils.createIntent(this, E2LMainActivity.class));
 		} catch (SQLException e) {

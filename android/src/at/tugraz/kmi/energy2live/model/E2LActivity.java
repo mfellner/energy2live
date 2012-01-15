@@ -16,11 +16,25 @@
 package at.tugraz.kmi.energy2live.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+
+import at.tugraz.kmi.energy2live.model.implementation.E2LActivityLocationImplementation;
 
 public interface E2LActivity extends Serializable {
-	public void setName(String name);
-
 	public String getName();
 
-	public String getDateTime();
+	public void setName(String name);
+
+	public Date getTime();
+
+	public void setTime(Date time);
+
+	public long getDuration();
+
+	public void setDuration(long duration);
+
+	public ArrayList<E2LActivityLocationImplementation> getLocations();
+
+	public void setLocations(ArrayList<E2LActivityLocationImplementation> locations);
 }
