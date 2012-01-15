@@ -23,34 +23,31 @@ import java.util.List;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
-import android.location.Location;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 import at.tugraz.kmi.energy2live.database.E2LDatabaseHelper;
-import at.tugraz.kmi.energy2live.location.E2LMapOverlay;
 import at.tugraz.kmi.energy2live.model.implementation.E2LActivityImplementation;
+import at.tugraz.kmi.energy2live.model.implementation.E2LActivityLocationImplementation;
 import at.tugraz.kmi.energy2live.remote.E2LNetworkConnection;
 import at.tugraz.kmi.energy2live.widget.ActionBar;
 import at.tugraz.kmi.energy2live.widget.ActionBar.Action;
 import at.tugraz.kmi.energy2live.widget.ActionBar.IntentAction;
+import at.tugraz.kmi.energy2live.widget.DrawableMapOverlay;
+import at.tugraz.kmi.energy2live.widget.MapPathOverlay;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
+import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
-import com.google.android.maps.OverlayItem;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 
 public class E2LManageActivity extends MapActivity {
 	public static final String EXTRA_ACTIVITY_ID = "EXTRA_ACTIVITY_ID";
-	// public static final String EXTRA_ACTIVITY_NAME = "EXTRA_ACTIVITY_NAME";
-	public static final String EXTRA_LOCATIONS = "EXTRA_LOCATIONS";
 	public static final String EXTRA_ACTIVITY = "EXTRA_ACTIVITY";
 
 	private E2LDatabaseHelper mDatabaseHelper;
@@ -59,6 +56,7 @@ public class E2LManageActivity extends MapActivity {
 	private TextView lblTime;
 	private TextView lblDuration;
 	private MapView mMapView;
+	private MapController mMapController;
 	private List<Overlay> mMapOverlays;
 
 	private class DeleteAction implements Action {
@@ -105,6 +103,7 @@ public class E2LManageActivity extends MapActivity {
 		mMapView = (MapView) findViewById(R.id.manage_mapview);
 		mMapView.setBuiltInZoomControls(true);
 		mMapOverlays = mMapView.getOverlays();
+		mMapController = mMapView.getController();
 
 		Integer integer = (Integer) getIntent().getExtras().get(EXTRA_ACTIVITY_ID);
 		if (integer != null) {
@@ -114,18 +113,6 @@ public class E2LManageActivity extends MapActivity {
 				throw new RuntimeException(e);
 			}
 		}
-		// String name = getIntent().getExtras().getString(EXTRA_ACTIVITY_NAME);
-		// if (name != null) {
-		// mActivity = new E2LActivityImplementation();
-		// mActivity.setName(name);
-		// try {
-		// Dao<E2LActivityImplementation, Integer> dao = getHelper().getActivityDao();
-		// dao.create(mActivity);
-		// loadFromActivity(mActivity.getId());
-		// } catch (SQLException e) {
-		// throw new RuntimeException(e);
-		// }
-		// }
 
 		E2LActivityImplementation activity = (E2LActivityImplementation) getIntent().getSerializableExtra(
 				EXTRA_ACTIVITY);
@@ -133,10 +120,10 @@ public class E2LManageActivity extends MapActivity {
 			createAndLoadFromActivity(activity);
 		}
 
-		ArrayList<Parcelable> list = getIntent().getParcelableArrayListExtra(EXTRA_LOCATIONS);
-		if (list != null) {
-			populateMap(list);
-		}
+		// ArrayList<Parcelable> list = getIntent().getParcelableArrayListExtra(EXTRA_LOCATIONS);
+		// if (list != null) {
+		// populateMap(list);
+		// }
 	}
 
 	@Override
@@ -187,14 +174,18 @@ public class E2LManageActivity extends MapActivity {
 	}
 
 	private void createAndLoadFromActivity(E2LActivityImplementation activity) {
+		boolean err = true;
 		try {
 			Dao<E2LActivityImplementation, Integer> dao = getHelper().getActivityDao();
 			mActivity = activity;
 			dao.create(mActivity);
+			err = false;
 		} catch (SQLException e) {
 			Log.e("E2L", "Could not create activity\n", e);
 		}
-		fillActivity();
+		if (!err) {
+			fillActivity();
+		}
 	}
 
 	private void fillActivity() {
@@ -216,24 +207,37 @@ public class E2LManageActivity extends MapActivity {
 		int minutes = (int) (duration / (60 * 1000)) % 60;
 		int seconds = (int) (duration / 1000) % 60;
 		lblDuration.setText(hours + ":" + minutes + ":" + seconds);
+		populateMap();
 	}
 
-	private void populateMap(ArrayList<Parcelable> locations) {
-		Drawable drawable = this.getResources().getDrawable(R.drawable.ic_androidmarker);
-		E2LMapOverlay itemizedOverlay = new E2LMapOverlay(drawable, this);
-		mMapOverlays.clear();
-
-		for (int i = 0; i < locations.size(); i++) {
-			Location location = (Location) locations.get(i);
-			int latitude = (int) Math.round(location.getLatitude() * 1E6f);
-			int longitude = (int) Math.round(location.getLongitude() * 1E6f);
-			GeoPoint point = new GeoPoint(latitude, longitude);
-			OverlayItem overlayitem = new OverlayItem(point, "Yes,", "this is dog!");
-			itemizedOverlay.addOverlay(overlayitem);
-			mMapOverlays.add(itemizedOverlay);
+	private void populateMap() {
+		ArrayList<E2LActivityLocationImplementation> locations = mActivity.getLocations();
+		int n = locations.size();
+		ArrayList<GeoPoint> geopoints = new ArrayList<GeoPoint>(n);
+		for (int i = 0; i < n; i++) {
+			E2LActivityLocationImplementation location = locations.get(i);
+			GeoPoint point = locationToGeoPont(location);
+			geopoints.add(point);
 		}
 
+		mMapOverlays.clear();
+		mMapOverlays.add(new MapPathOverlay(geopoints));
+		mMapOverlays.add(new DrawableMapOverlay(this, geopoints.get(0), R.drawable.ic_pin));
+		mMapOverlays.add(new DrawableMapOverlay(this, geopoints.get(n - 1), R.drawable.ic_pin));
+
+		GeoPoint firstP = geopoints.get(0);
+		GeoPoint lastP = geopoints.get(n - 1);
+		mMapController.setCenter(geopoints.get(n / 2));
+		int latSpanE6 = firstP.getLatitudeE6() - lastP.getLatitudeE6();
+		int lonSpanE6 = firstP.getLongitudeE6() - lastP.getLongitudeE6();
+		mMapController.zoomToSpan(latSpanE6, lonSpanE6);
 		mMapView.postInvalidate();
+	}
+
+	private GeoPoint locationToGeoPont(E2LActivityLocationImplementation location) {
+		int latitude = (int) Math.round(location.getLatitude() * 1E6f);
+		int longitude = (int) Math.round(location.getLongitude() * 1E6f);
+		return new GeoPoint(latitude, longitude);
 	}
 
 	private E2LDatabaseHelper getHelper() {

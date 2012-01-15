@@ -176,7 +176,7 @@ public class E2LLocationService extends Service implements LocationListener {
 		// send initial message to handler
 		Message msg = mServiceHandler.obtainMessage();
 		msg.what = ServiceHandler.MSG_REQUEST_LOCATION_UPDATES;
-		msg.obj = LocationManager.NETWORK_PROVIDER;
+		msg.obj = LocationManager.GPS_PROVIDER;
 		msg.arg1 = mMinTimeDelta;
 		msg.arg2 = mMinDistDelta;
 		mServiceHandler.sendMessage(msg);
@@ -203,8 +203,8 @@ public class E2LLocationService extends Service implements LocationListener {
 
 	@Override
 	public void onLocationChanged(Location location) {
-		mServiceHandler.wakeUp();
 		Log.d("Energy2Live", "Location found lat:" + location.getLatitude() + " long:" + location.getLongitude());
+		mServiceHandler.wakeUp();
 		Message msg = mServiceHandler.obtainMessage();
 		msg.what = ServiceHandler.MSG_ON_LOCATION_CHANGED;
 		msg.obj = location;
@@ -213,19 +213,20 @@ public class E2LLocationService extends Service implements LocationListener {
 
 	@Override
 	public void onProviderDisabled(String provider) {
-		mServiceHandler.wakeUp();
-		String otherProvider = oppositeProviderOf(provider);
-		if (mLocationManager.isProviderEnabled(otherProvider)) {
-			Message msg = mServiceHandler.obtainMessage();
-			msg.what = ServiceHandler.MSG_REQUEST_LOCATION_UPDATES;
-			msg.obj = otherProvider;
-			msg.arg1 = mMinTimeDelta;
-			msg.arg2 = mMinDistDelta;
-			mServiceHandler.sendMessage(msg);
-		} else {
-			// TODO make toast
-			mServiceHandler.sendEmptyMessage(ServiceHandler.MSG_STOP);
-		}
+		// mServiceHandler.wakeUp();
+		// String otherProvider = oppositeProviderOf(provider);
+		// if (mLocationManager.isProviderEnabled(otherProvider)) {
+		// Message msg = mServiceHandler.obtainMessage();
+		// msg.what = ServiceHandler.MSG_REQUEST_LOCATION_UPDATES;
+		// msg.obj = otherProvider;
+		// msg.arg1 = mMinTimeDelta;
+		// msg.arg2 = mMinDistDelta;
+		// mServiceHandler.sendMessage(msg);
+		// } else {
+		// // TODO make toast
+		// Log.d("E2L", provider + " disabled, stop");
+		// mServiceHandler.sendEmptyMessage(ServiceHandler.MSG_STOP);
+		// }
 	}
 
 	@Override
@@ -246,9 +247,11 @@ public class E2LLocationService extends Service implements LocationListener {
 		mServiceHandler.wakeUp();
 		switch (status) {
 		case LocationProvider.AVAILABLE:
+			Log.d("E2L", provider + " AVAILABLE");
 			switchToProvider(LocationManager.GPS_PROVIDER);
 			break;
 		case LocationProvider.TEMPORARILY_UNAVAILABLE:
+			Log.d("E2L", provider + " TEMPORARILY_UNAVAILABLE");
 			if (provider.equals(LocationManager.GPS_PROVIDER)
 					&& mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
 				switchToProvider(LocationManager.NETWORK_PROVIDER);
@@ -257,6 +260,7 @@ public class E2LLocationService extends Service implements LocationListener {
 			}
 			break;
 		case LocationProvider.OUT_OF_SERVICE:
+			Log.d("E2L", provider + " OUT_OF_SERVICE");
 			if (provider.equals(LocationManager.GPS_PROVIDER)
 					&& mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
 				switchToProvider(LocationManager.NETWORK_PROVIDER);
@@ -268,6 +272,7 @@ public class E2LLocationService extends Service implements LocationListener {
 	}
 
 	private void switchToProvider(String provider) {
+		Log.d("E2L", "switchToProvider " + provider);
 		Message msg = mServiceHandler.obtainMessage();
 		msg.what = ServiceHandler.MSG_REQUEST_LOCATION_UPDATES;
 		msg.obj = provider;
