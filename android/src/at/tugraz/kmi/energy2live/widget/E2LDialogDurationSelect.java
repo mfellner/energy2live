@@ -5,6 +5,7 @@ import android.content.Context;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 import at.tugraz.kmi.energy2live.R;
 
 public class E2LDialogDurationSelect extends Dialog implements View.OnClickListener {
@@ -71,7 +72,8 @@ public class E2LDialogDurationSelect extends Dialog implements View.OnClickListe
 		mSelectedMinutes = Integer.parseInt(mMinutesArray[spnnrMinutes.getSelectedItemPosition()]);
 		if (mSelectedHours > 0 || mSelectedMinutes > 0)
 			dismiss();
-		// else
-		// TODO: make toast
+		else
+			Toast.makeText(getContext(), getContext().getResources().getString(R.string.msg_bad_time),
+					Toast.LENGTH_SHORT).show();
 	}
 }

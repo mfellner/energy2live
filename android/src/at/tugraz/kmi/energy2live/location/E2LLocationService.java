@@ -36,6 +36,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
 import android.util.Log;
+import android.widget.Toast;
 import at.tugraz.kmi.energy2live.E2LRecordActivity;
 import at.tugraz.kmi.energy2live.R;
 
@@ -73,10 +74,8 @@ public class E2LLocationService extends Service implements LocationListener {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case MSG_STOP:
-				mLocationManager.removeUpdates(E2LLocationService.this);
 				mStoppedMyself = true;
 				stopSelf(mStartId);
-				sleep();
 				break;
 			case MSG_REQUEST_LOCATION_UPDATES:
 				mLocationManager.removeUpdates(E2LLocationService.this);
@@ -176,7 +175,7 @@ public class E2LLocationService extends Service implements LocationListener {
 		// send initial message to handler
 		Message msg = mServiceHandler.obtainMessage();
 		msg.what = ServiceHandler.MSG_REQUEST_LOCATION_UPDATES;
-		msg.obj = LocationManager.GPS_PROVIDER;
+		msg.obj = LocationManager.NETWORK_PROVIDER;
 		msg.arg1 = mMinTimeDelta;
 		msg.arg2 = mMinDistDelta;
 		mServiceHandler.sendMessage(msg);
@@ -194,7 +193,7 @@ public class E2LLocationService extends Service implements LocationListener {
 	public void onDestroy() {
 		RUNNING = false;
 		mServiceHandler.wakeUp();
-		mServiceHandler.sendEmptyMessage(-1);
+		mLocationManager.removeUpdates(this);
 		mNotificationManager.cancel(NOTIFICATION_ID);
 		for (int i = 0; i < CALLBACKS.size(); i++) {
 			CALLBACKS.get(i).onLocationServiceStop(mStoppedMyself, mLocations);
@@ -213,20 +212,21 @@ public class E2LLocationService extends Service implements LocationListener {
 
 	@Override
 	public void onProviderDisabled(String provider) {
-		// mServiceHandler.wakeUp();
-		// String otherProvider = oppositeProviderOf(provider);
-		// if (mLocationManager.isProviderEnabled(otherProvider)) {
-		// Message msg = mServiceHandler.obtainMessage();
-		// msg.what = ServiceHandler.MSG_REQUEST_LOCATION_UPDATES;
-		// msg.obj = otherProvider;
-		// msg.arg1 = mMinTimeDelta;
-		// msg.arg2 = mMinDistDelta;
-		// mServiceHandler.sendMessage(msg);
-		// } else {
-		// // TODO make toast
-		// Log.d("E2L", provider + " disabled, stop");
-		// mServiceHandler.sendEmptyMessage(ServiceHandler.MSG_STOP);
-		// }
+		mServiceHandler.wakeUp();
+		String otherProvider = oppositeProviderOf(provider);
+		if (mLocationManager.isProviderEnabled(otherProvider)) {
+			Message msg = mServiceHandler.obtainMessage();
+			msg.what = ServiceHandler.MSG_REQUEST_LOCATION_UPDATES;
+			msg.obj = otherProvider;
+			msg.arg1 = mMinTimeDelta;
+			msg.arg2 = mMinDistDelta;
+			mServiceHandler.sendMessage(msg);
+		} else {
+			Toast.makeText(getApplicationContext(), getResources().getString(R.string.msg_no_provider),
+					Toast.LENGTH_SHORT).show();
+			Log.d("E2L", provider + " disabled, stop");
+			mServiceHandler.sendEmptyMessage(ServiceHandler.MSG_STOP);
+		}
 	}
 
 	@Override

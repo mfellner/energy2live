@@ -128,7 +128,6 @@ public class E2LManageActivity extends MapActivity {
 
 	@Override
 	protected boolean isRouteDisplayed() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -213,6 +212,8 @@ public class E2LManageActivity extends MapActivity {
 	private void populateMap() {
 		ArrayList<E2LActivityLocationImplementation> locations = mActivity.getLocations();
 		int n = locations.size();
+		if (n == 0)
+			return;
 		ArrayList<GeoPoint> geopoints = new ArrayList<GeoPoint>(n);
 		for (int i = 0; i < n; i++) {
 			E2LActivityLocationImplementation location = locations.get(i);

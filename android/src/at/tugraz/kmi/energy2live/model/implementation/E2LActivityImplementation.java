@@ -100,8 +100,7 @@ public class E2LActivityImplementation implements E2LActivity {
 	}
 
 	public boolean hasEmptyFields() {
-		if (mName == null || mName.length() == 0 || mTime == null || mDuration == 0 || mLocations == null
-				|| mLocations.size() == 0)
+		if (mName == null || mName.length() == 0 || mTime == null || mDuration == 0 || mLocations == null)
 			return true;
 		return false;
 	}

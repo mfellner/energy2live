@@ -16,6 +16,7 @@
 package at.tugraz.kmi.energy2live;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.content.DialogInterface;
@@ -24,8 +25,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 import at.tugraz.kmi.energy2live.database.E2LDatabaseHelper;
 import at.tugraz.kmi.energy2live.model.implementation.E2LActivityImplementation;
+import at.tugraz.kmi.energy2live.model.implementation.E2LActivityLocationImplementation;
 import at.tugraz.kmi.energy2live.widget.ActionBar;
 import at.tugraz.kmi.energy2live.widget.ActionBar.IntentAction;
 import at.tugraz.kmi.energy2live.widget.E2LDialogDurationSelect;
@@ -79,7 +82,8 @@ public class E2LAddNewActivity extends OrmLiteBaseActivity<E2LDatabaseHelper> im
 			Dao<E2LActivityImplementation, Integer> dao = getHelper().getActivityDao();
 			dao.create(mActivity);
 			dao.refresh(mActivity);
-			// TODO: toast create successful
+			Toast.makeText(getApplicationContext(), getResources().getString(R.string.msg_creation_successful),
+					Toast.LENGTH_SHORT).show();
 			startActivity(Utils.createIntent(this, E2LMainActivity.class));
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -92,13 +96,13 @@ public class E2LAddNewActivity extends OrmLiteBaseActivity<E2LDatabaseHelper> im
 	}
 
 	private boolean fillActivityObject() {
-		String name = txtName.getText().toString();
-
-		mActivity.setName(name);
+		mActivity.setName(txtName.getText().toString());
 		mActivity.setTime(Calendar.getInstance().getTime());
+		mActivity.setLocations(new ArrayList<E2LActivityLocationImplementation>());
 
 		if (mActivity.hasEmptyFields()) {
-			// TODO: make toast
+			Toast.makeText(getApplicationContext(), getResources().getString(R.string.msg_empty_fields),
+					Toast.LENGTH_SHORT).show();
 			return false;
 		}
 		return true;

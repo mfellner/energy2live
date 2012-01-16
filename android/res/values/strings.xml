@@ -41,6 +41,10 @@
     <string name="msg_delete_activity">Delete this activity?</string>
     <string name="msg_stop_recording">Stop recording activity?</string>
     <string name="msg_send_activity">Send activity to remote server?</string>
+    <string name="msg_bad_time">Please enter a valid time!</string>
+    <string name="msg_creation_successful">Activity created</string>
+    <string name="msg_empty_fields">Please fill out all fields!</string>
+    <string name="msg_no_provider">No location provider available! (GPS, Wifi, network)</string>
 
     <string name="lbl_manage_activity_name_label">Name:</string>
     <string name="lbl_manage_activity_time_label">Time:</string>
