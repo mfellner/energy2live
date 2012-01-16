@@ -54,32 +54,7 @@ public class E2LMainActivity extends OrmLiteBaseActivity<E2LDatabaseHelper> impl
 
 		lastestActivitiesList = (ListView) findViewById(R.id.latest_activities_list);
 		lastestActivitiesList.setOnItemClickListener(this);
-
-		// testSerialize();
 	}
-
-	// private void testSerialize() {
-	// Log.d("E2L", "Try serializing point...");
-	// XStream xstream = new XStream();
-	// xstream.alias(E2LPointImplementation.class.toString(), E2LPointImplementation.class);
-	// Point point = new E2LPointImplementation(422.223, 224.332);
-	// String xml = xstream.toXML(point);
-	// Log.d("E2L", "XML:\n" + xml);
-	//
-	// try {
-	// File file = new File(getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "point.xml");
-	// Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
-	// out.write(xml);
-	// out.close();
-	// Log.d("E2L", "Saved xml file");
-	// } catch (IOException e) {
-	// Log.e("E2L", "Failed saving xml file\n", e);
-	// }
-	//
-	// Point restoredPoint = (Point) xstream.fromXML(xml);
-	// Log.d("E2L", "Deserialized point: " + restoredPoint.getLatitude() + "/" +
-	// restoredPoint.getLongitude());
-	// }
 
 	@Override
 	protected void onResume() {
