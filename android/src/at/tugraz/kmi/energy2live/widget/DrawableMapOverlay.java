@@ -34,7 +34,6 @@ public class DrawableMapOverlay extends Overlay {
 		mGeoPoint = geoPoint;
 		mPoint = new Point();
 		mBitmap = BitmapFactory.decodeResource(context.getResources(), drawable);
-
 	}
 
 	@Override
@@ -51,7 +50,6 @@ public class DrawableMapOverlay extends Overlay {
 
 	@Override
 	public boolean onTap(GeoPoint p, MapView mapView) {
-		// Handle tapping on the overlay here
-		return true;
+		return false;
 	}
 }
