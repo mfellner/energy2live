@@ -138,8 +138,19 @@ public class E2LNetworkConnection {
 	}
 
 	private void postData(final ACTION a, final String url, final List<NameValuePair> nameValuePairs) {
-		final ProgressDialog progressDialog = ProgressDialog.show(mContext, "",
-				mContext.getString(R.string.msg_remote_post_data), true);
+		String message = null;
+		switch (a) {
+		case LOGIN:
+			mContext.getString(R.string.msg_remote_post_login);
+			break;
+		case REGISTER:
+			mContext.getString(R.string.msg_remote_post_register);
+			break;
+		case ACTIVITY:
+			mContext.getString(R.string.msg_remote_post_activity);
+			break;
+		}
+		final ProgressDialog progressDialog = ProgressDialog.show(mContext, "", message, true);
 		Thread thread = new Thread() {
 			@Override
 			public void run() {

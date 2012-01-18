@@ -47,7 +47,9 @@
     <string name="msg_no_provider">No location provider available (GPS, Wifi, network)</string>
     <string name="msg_settings_bad_server">Invalid server address!</string>
     <string name="msg_remote_no_server">No server address configured!</string>
-    <string name="msg_remote_post_data">Uploading…</string>
+    <string name="msg_remote_post_login">Logging in…</string>
+    <string name="msg_remote_post_register">Registering…</string>
+    <string name="msg_remote_post_activity">Uploading…</string>
     <string name="msg_login_failed">Login failed</string>
 
     <string name="lbl_manage_activity_name_label">Name:</string>
