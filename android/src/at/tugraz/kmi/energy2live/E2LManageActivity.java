@@ -138,7 +138,7 @@ public class E2LManageActivity extends MapActivity {
 				.setPositiveButton(res.getString(R.string.yes), new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int id) {
-						E2LNetworkConnection connection = new E2LNetworkConnection();
+						E2LNetworkConnection connection = new E2LNetworkConnection(E2LManageActivity.this);
 						connection.sendActivityToServer(mActivity);
 					}
 				}).setNegativeButton(res.getString(R.string.no), new DialogInterface.OnClickListener() {

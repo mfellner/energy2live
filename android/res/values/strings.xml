@@ -45,10 +45,15 @@
     <string name="msg_creation_successful">Activity created</string>
     <string name="msg_empty_fields">Please fill out all fields!</string>
     <string name="msg_no_provider">No location provider available! (GPS, Wifi, network)</string>
+    <string name="msg_settings_bad_server">Invalid server address!</string>
+    <string name="msg_remote_no_server">No server address configured!</string>
+    <string name="msg_remote_post_data">Uploading…</string>
 
     <string name="lbl_manage_activity_name_label">Name:</string>
     <string name="lbl_manage_activity_time_label">Time:</string>
     <string name="lbl_manage_activity_duration_label">Duration:</string>
+    
+    <string name="lbl_settings_server">Remote Server IP-Address</string>
     
     <string name="hours">hour(s)</string>
     <string name="minutes">minute(s)</string>

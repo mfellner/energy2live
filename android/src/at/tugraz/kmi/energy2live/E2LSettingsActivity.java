@@ -16,13 +16,23 @@
 package at.tugraz.kmi.energy2live;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.view.KeyEvent;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 import at.tugraz.kmi.energy2live.widget.ActionBar;
 import at.tugraz.kmi.energy2live.widget.ActionBar.IntentAction;
 
 public class E2LSettingsActivity extends Activity {
+	public static final String PREF_SERVER_ADDRESS = "PREF_SERVER_ADDRESS";
+	private SharedPreferences mSharedPreferences;
+	private EditText txtServer;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -31,16 +41,32 @@ public class E2LSettingsActivity extends Activity {
 		ActionBar actionBar = (ActionBar) findViewById(R.id.settings_actionbar);
 		actionBar.setHomeAction(new IntentAction(this, Utils.createIntent(this, E2LMainActivity.class),
 				R.drawable.ic_action_home));
+
+		mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+		txtServer = (EditText) findViewById(R.id.txt_settings_server);
+		init();
 	}
 
-	/**
-	 * Creates an Intent for this activity.
-	 * 
-	 * @return Intent for this activity.
-	 */
-	public static Intent createIntent(Context context) {
-		Intent i = new Intent(context, E2LMainActivity.class);
-		i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		return i;
+	private void init() {
+		String server = mSharedPreferences.getString(PREF_SERVER_ADDRESS, "<not set>");
+		txtServer.setText(server);
+		txtServer.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+			@Override
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				if (actionId != EditorInfo.IME_ACTION_DONE)
+					return false;
+				String server = txtServer.getText().toString();
+				if (server.matches("\\d{1,3}.\\d{1,3}.\\d{1,3}.\\d{1,3}")) {
+					Editor editor = mSharedPreferences.edit();
+					editor.putString(PREF_SERVER_ADDRESS, server);
+					editor.commit();
+				} else {
+					Toast.makeText(getApplicationContext(), getResources().getString(R.string.msg_settings_bad_server),
+							Toast.LENGTH_SHORT).show();
+				}
+				return false;
+			}
+		});
 	}
 }
