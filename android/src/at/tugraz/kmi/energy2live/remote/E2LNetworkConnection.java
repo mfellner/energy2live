@@ -29,6 +29,9 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 
 import st.energy2live.data.user.User;
 import android.app.ProgressDialog;
@@ -141,20 +144,22 @@ public class E2LNetworkConnection {
 		String message = null;
 		switch (a) {
 		case LOGIN:
-			mContext.getString(R.string.msg_remote_post_login);
+			message = mContext.getString(R.string.msg_remote_post_login);
 			break;
 		case REGISTER:
-			mContext.getString(R.string.msg_remote_post_register);
+			message = mContext.getString(R.string.msg_remote_post_register);
 			break;
 		case ACTIVITY:
-			mContext.getString(R.string.msg_remote_post_activity);
+			message = mContext.getString(R.string.msg_remote_post_activity);
 			break;
 		}
 		final ProgressDialog progressDialog = ProgressDialog.show(mContext, "", message, true);
 		Thread thread = new Thread() {
 			@Override
 			public void run() {
-				HttpClient httpclient = new DefaultHttpClient();
+				HttpParams httpParameters = new BasicHttpParams();
+				HttpConnectionParams.setConnectionTimeout(httpParameters, 4000);
+				HttpClient httpclient = new DefaultHttpClient(httpParameters);
 				HttpPost httppost = new HttpPost(url);
 				HttpResponse response = null;
 

@@ -58,6 +58,8 @@
     
     <string name="lbl_settings_server">Remote Server IP-Address</string>
     
+    <string name="lbl_record_vehicle">Select means of transport</string>
+    
     <string name="hours">hour(s)</string>
     <string name="minutes">minute(s)</string>
     <string name="yes">Yes</string>
