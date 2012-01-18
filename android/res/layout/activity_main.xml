@@ -30,19 +30,23 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
-            <Button
+            <ImageButton
                 android:id="@+id/btn_new_activity"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@drawable/ic_btn_add"
+                android:layout_margin="0dp"
+                android:src="@drawable/ic_action_add"
+                android:background="@drawable/bg_btn_main"
                 android:onClick="addNewActivityClicked" />
-            <Button
+            <ImageButton
                 android:id="@+id/btn_record_activity"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@drawable/ic_btn_record"
+                android:layout_margin="0dp"
+                android:src="@drawable/ic_action_record"
+                android:background="@drawable/bg_btn_main"
                 android:onClick="recordNewActivityClicked" />
     </LinearLayout>
     
@@ -56,6 +60,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
             android:text="@string/lbl_latest_activities"
             android:textAppearance="?android:attr/textAppearanceMedium" />
         <ListView
