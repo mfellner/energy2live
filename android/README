@@ -14,19 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ################################################################################
 
-Energy2Live is an Android-based mobile application written in Java and an Apache
-Tomcat-based webservice also written in Java to track personal energy
-consumption and store it in an online triplestore based on Sesame which can
-be queried using SPARQL.
 
-
-/android
+Build instructions:
 -------------------------------------------------------------------------------
-Contains the source code and resources of the android application. Also
-contains an Eclipse project and an Ant build file.
 
+A) Import /android as an exsisting Eclipse project.
 
-/server
--------------------------------------------------------------------------------
-Contains the source code and resources of the Tomcat 7 & Spring webservice.
-Also contains an Eclipse project.
+B) Use the provided Ant build script (may not work at this time).
