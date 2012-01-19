@@ -15,6 +15,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/xstream-1.4.2.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/RDFWebTool"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Energy2LiveServer"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
