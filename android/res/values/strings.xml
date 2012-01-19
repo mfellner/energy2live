@@ -15,8 +15,8 @@
 <resources>
 
     <string name="app_name">Energy2Live</string>
-    <string name="lbl_email">Enter your email address</string>
-    <string name="lbl_password">Enter your password</string>
+    <string name="lbl_login_email">Enter your user name</string> <!--  TODO change back to email address -->
+    <string name="lbl_login_password">Enter your password</string>
     <string name="lbl_latest_activities">Your latest activities</string>
     <string name="lbl_add_new_name">Enter activity name</string>
     <string name ="lbl_add_new_duration">Select duration of activity</string>
@@ -26,6 +26,7 @@
     <string name="btn_duration_select">Select</string>
     <string name="btn_record_start">Start Recording</string>
     <string name="btn_record_stop">Stop Recording</string>
+    <string name="btn_manage_activity_send">Send To Server</string>
     <string name="title_actionbar_main">Energy2Live</string>
     <string name="title_actionbar_manage">Manage Activity</string>
     <string name="title_actionbar_settings">Settings</string>
@@ -34,11 +35,32 @@
     <string name="menu_settings">Settings</string>
     <string name="menu_about">About</string>
     <string name="dialog_add_new_title">Add New Activity</string>
+    <string name="dialog_about_title">Energy2Live</string>
+    <string name="dialog_about_message">www.kmi.tugraz.at</string>
+    <string name="dialog_about_button">close</string>
     <string name="msg_delete_activity">Delete this activity?</string>
     <string name="msg_stop_recording">Stop recording activity?</string>
+    <string name="msg_send_activity">Send activity to remote server?</string>
+    <string name="msg_bad_time">Please enter a valid time</string>
+    <string name="msg_creation_successful">Activity created</string>
+    <string name="msg_empty_fields">Please fill out all fields</string>
+    <string name="msg_no_provider">No location provider available (GPS, Wifi, network)</string>
+    <string name="msg_settings_bad_server">Invalid server address!</string>
+    <string name="msg_remote_no_server">No server address configured!</string>
+    <string name="msg_remote_post_login">Logging in…</string>
+    <string name="msg_remote_post_register">Registering…</string>
+    <string name="msg_remote_post_activity">Uploading…</string>
+    <string name="msg_login_failed">Login failed</string>
+    <string name="msg_manage_upload_success">Activity upload successful</string>
+    <string name="msg_manage_upload_failed">Activity upload failed</string>
 
     <string name="lbl_manage_activity_name_label">Name:</string>
     <string name="lbl_manage_activity_time_label">Time:</string>
+    <string name="lbl_manage_activity_duration_label">Duration:</string>
+    
+    <string name="lbl_settings_server">Remote Server IP-Address</string>
+    
+    <string name="lbl_record_vehicle">Select means of transport</string>
     
     <string name="hours">hour(s)</string>
     <string name="minutes">minute(s)</string>

@@ -18,6 +18,8 @@ package at.tugraz.kmi.energy2live;
 import java.sql.SQLException;
 import java.util.List;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -39,6 +41,7 @@ import com.j256.ormlite.stmt.QueryBuilder;
 public class E2LMainActivity extends OrmLiteBaseActivity<E2LDatabaseHelper> implements ListView.OnItemClickListener {
 	private static final long MAX_LATEST_ACTIVITIES = 10;
 	private ListView lastestActivitiesList;
+	private AlertDialog.Builder aboutDialogBuilder;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -77,7 +80,7 @@ public class E2LMainActivity extends OrmLiteBaseActivity<E2LDatabaseHelper> impl
 			startActivity(Utils.createIntent(this, E2LSettingsActivity.class));
 			return true;
 		case R.id.menu_about:
-			// TODO: show about dialog
+			showAboutDialog();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -111,5 +114,20 @@ public class E2LMainActivity extends OrmLiteBaseActivity<E2LDatabaseHelper> impl
 		ArrayAdapter<E2LActivityImplementation> arrayAdapter = new E2LActivityArrayAdapter(this,
 				R.layout.list_activities_row, list, getHelper());
 		lastestActivitiesList.setAdapter(arrayAdapter);
+	}
+
+	private void showAboutDialog() {
+		if (aboutDialogBuilder == null) {
+			aboutDialogBuilder = new AlertDialog.Builder(this);
+			aboutDialogBuilder.setTitle(R.string.dialog_about_title).setMessage(R.string.dialog_about_message)
+					.setIcon(R.drawable.ic_launcher)
+					.setNeutralButton(R.string.dialog_about_button, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int id) {
+							dialog.cancel();
+						}
+					});
+		}
+		aboutDialogBuilder.create().show();
 	}
 }

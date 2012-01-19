@@ -16,25 +16,36 @@
 package at.tugraz.kmi.energy2live.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.List;
 
-import at.tugraz.kmi.energy2live.model.implementation.E2LActivityLocationImplementation;
+import at.tugraz.kmi.energy2live.model.implementation.E2LActivityImplementation;
 
-public interface E2LActivity extends Serializable {
-	public String getName();
+public interface E2LUser extends Serializable {
+	String getName();
 
-	public void setName(String name);
+	void setName(String name);
 
-	public Date getTime();
+	String getPassword();
 
-	public void setTime(Date time);
+	void setPassword(String password);
 
-	public long getDuration();
+	String getFullName();
 
-	public void setDuration(long duration);
+	void setFullName(String fullname);
 
-	public ArrayList<E2LActivityLocationImplementation> getLocations();
+	String getEmail();
 
-	public void setLocations(ArrayList<E2LActivityLocationImplementation> locations);
+	void setEmail(String email);
+
+	String getHomePage();
+
+	void setHomePage(String homepage);
+
+	int getPrivacy();
+
+	void setPrivacy(int privacy);
+
+	List<E2LActivityImplementation> getActivities();
+
+	void setActivities(List<E2LActivityImplementation> activities);
 }

@@ -14,29 +14,25 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main_relative_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
     
     <TextView
-        android:id="@+id/lbl_email"
+        android:id="@+id/lbl_login_email"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:text="@string/lbl_email" />
+        android:text="@string/lbl_login_email" />
     
     <EditText
-        android:id="@+id/txt_email"
+        android:id="@+id/txt_login_email"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/lbl_email"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="5dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
@@ -45,33 +41,27 @@
     </EditText>
 
     <TextView
-        android:id="@+id/lbl_password"
+        android:id="@+id/lbl_login_password"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/txt_email"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:text="@string/lbl_password" />
+        android:text="@string/lbl_login_password" />
     
     <EditText
-        android:id="@+id/txt_password"
+        android:id="@+id/txt_login_password"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/lbl_password"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="5dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:inputType="textPassword" />
     
     <Button
-        android:id="@+id/btn_login"
+        android:id="@+id/btn_login_login"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/txt_password"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
@@ -79,15 +69,13 @@
         android:onClick="doLogin" />
     
     <Button
-        android:id="@+id/btn_register"
-        android:layout_below="@id/btn_login"
+        android:id="@+id/btn_login_register"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:text="@string/btn_register"
         android:onClick="doRegister" />
 
-</RelativeLayout>
+</LinearLayout>

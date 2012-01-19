@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright Maximilian Fellner <max.fellner@gmail.com> -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true" >
+        <shape>
+            <gradient
+                android:startColor="@color/actionbar_background_item_pressed_start"
+                android:endColor="@color/actionbar_background_item_pressed_end"
+                android:angle="270" />
+            <stroke
+                android:width="0dp"
+                android:color="#2a65a0" />
+            <corners
+                android:radius="0dp" />
+            <padding
+                android:left="0dp"
+                android:top="10dp"
+                android:right="0dp"
+                android:bottom="10dp" />
+        </shape>
+    </item>
+    <item>
+        <shape>
+            <gradient
+                android:startColor="#777777"
+                android:endColor="#333333"
+                android:angle="270" />
+            <stroke
+                android:width="0dp"
+                android:color="#b0b0b0" />
+            <corners
+                android:radius="0dp" />
+            <padding
+                android:left="0dp"
+                android:top="10dp"
+                android:right="0dp"
+                android:bottom="10dp" />
+        </shape>
+    </item>
+</selector>

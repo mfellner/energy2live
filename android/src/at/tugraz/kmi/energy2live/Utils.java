@@ -27,6 +27,7 @@ public class Utils {
 	};
 
 	public static final SimpleDateFormat SDF_READABLE = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
+	public static final SimpleDateFormat SDF_COMPACT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
 	/**
 	 * Creates an Intent for an activity.

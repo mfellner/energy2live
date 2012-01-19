@@ -36,6 +36,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
 import android.util.Log;
+import android.widget.Toast;
 import at.tugraz.kmi.energy2live.E2LRecordActivity;
 import at.tugraz.kmi.energy2live.R;
 
@@ -73,10 +74,8 @@ public class E2LLocationService extends Service implements LocationListener {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case MSG_STOP:
-				mLocationManager.removeUpdates(E2LLocationService.this);
 				mStoppedMyself = true;
 				stopSelf(mStartId);
-				sleep();
 				break;
 			case MSG_REQUEST_LOCATION_UPDATES:
 				mLocationManager.removeUpdates(E2LLocationService.this);
@@ -194,7 +193,7 @@ public class E2LLocationService extends Service implements LocationListener {
 	public void onDestroy() {
 		RUNNING = false;
 		mServiceHandler.wakeUp();
-		mServiceHandler.sendEmptyMessage(-1);
+		mLocationManager.removeUpdates(this);
 		mNotificationManager.cancel(NOTIFICATION_ID);
 		for (int i = 0; i < CALLBACKS.size(); i++) {
 			CALLBACKS.get(i).onLocationServiceStop(mStoppedMyself, mLocations);
@@ -203,8 +202,8 @@ public class E2LLocationService extends Service implements LocationListener {
 
 	@Override
 	public void onLocationChanged(Location location) {
-		mServiceHandler.wakeUp();
 		Log.d("Energy2Live", "Location found lat:" + location.getLatitude() + " long:" + location.getLongitude());
+		mServiceHandler.wakeUp();
 		Message msg = mServiceHandler.obtainMessage();
 		msg.what = ServiceHandler.MSG_ON_LOCATION_CHANGED;
 		msg.obj = location;
@@ -223,7 +222,9 @@ public class E2LLocationService extends Service implements LocationListener {
 			msg.arg2 = mMinDistDelta;
 			mServiceHandler.sendMessage(msg);
 		} else {
-			// TODO make toast
+			Toast.makeText(getApplicationContext(), getResources().getString(R.string.msg_no_provider),
+					Toast.LENGTH_SHORT).show();
+			Log.d("E2L", provider + " disabled, stop");
 			mServiceHandler.sendEmptyMessage(ServiceHandler.MSG_STOP);
 		}
 	}
@@ -246,9 +247,11 @@ public class E2LLocationService extends Service implements LocationListener {
 		mServiceHandler.wakeUp();
 		switch (status) {
 		case LocationProvider.AVAILABLE:
+			Log.d("E2L", provider + " AVAILABLE");
 			switchToProvider(LocationManager.GPS_PROVIDER);
 			break;
 		case LocationProvider.TEMPORARILY_UNAVAILABLE:
+			Log.d("E2L", provider + " TEMPORARILY_UNAVAILABLE");
 			if (provider.equals(LocationManager.GPS_PROVIDER)
 					&& mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
 				switchToProvider(LocationManager.NETWORK_PROVIDER);
@@ -257,6 +260,7 @@ public class E2LLocationService extends Service implements LocationListener {
 			}
 			break;
 		case LocationProvider.OUT_OF_SERVICE:
+			Log.d("E2L", provider + " OUT_OF_SERVICE");
 			if (provider.equals(LocationManager.GPS_PROVIDER)
 					&& mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
 				switchToProvider(LocationManager.NETWORK_PROVIDER);
@@ -268,6 +272,7 @@ public class E2LLocationService extends Service implements LocationListener {
 	}
 
 	private void switchToProvider(String provider) {
+		Log.d("E2L", "switchToProvider " + provider);
 		Message msg = mServiceHandler.obtainMessage();
 		msg.what = ServiceHandler.MSG_REQUEST_LOCATION_UPDATES;
 		msg.obj = provider;

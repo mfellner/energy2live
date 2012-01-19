@@ -16,6 +16,8 @@
 package at.tugraz.kmi.energy2live;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -25,15 +27,24 @@ import android.content.res.Resources;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 import at.tugraz.kmi.energy2live.location.E2LLocationService;
+import at.tugraz.kmi.energy2live.model.E2LActivity;
+import at.tugraz.kmi.energy2live.model.implementation.E2LActivityImplementation;
+import at.tugraz.kmi.energy2live.model.implementation.E2LActivityLocationImplementation;
 import at.tugraz.kmi.energy2live.widget.ActionBar;
 import at.tugraz.kmi.energy2live.widget.ActionBar.IntentAction;
 
 public class E2LRecordActivity extends Activity implements E2LLocationService.Callback {
 	private EditText txtName;
+	private Spinner spnnrVehicle;
 	private ToggleButton btnRecordToggle;
+
+	private String[] mVehicleArray;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -45,7 +56,12 @@ public class E2LRecordActivity extends Activity implements E2LLocationService.Ca
 				R.drawable.ic_action_home));
 
 		txtName = (EditText) findViewById(R.id.txt_record_name);
+		spnnrVehicle = (Spinner) findViewById(R.id.spnnr_record_vehicle);
 		btnRecordToggle = (ToggleButton) findViewById(R.id.btn_record_start_stop);
+
+		mVehicleArray = new String[] { "Car: Audi A3", "Car: BMW X5", "Car: VW Golf", "Bicycle" };
+
+		spnnrVehicle.setAdapter(new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, mVehicleArray));
 
 		E2LLocationService.addCallback(this);
 
@@ -69,6 +85,8 @@ public class E2LRecordActivity extends Activity implements E2LLocationService.Ca
 					.setPositiveButton(res.getString(R.string.yes), new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int id) {
+							txtName.setEnabled(true);
+							spnnrVehicle.setEnabled(true);
 							btnRecordToggle.setChecked(false);
 							stopService(new Intent(E2LRecordActivity.this, E2LLocationService.class));
 						}
@@ -81,8 +99,15 @@ public class E2LRecordActivity extends Activity implements E2LLocationService.Ca
 					});
 			builder.create().show();
 		} else {
-			btnRecordToggle.setChecked(true);
-			startService(new Intent(this, E2LLocationService.class));
+			if (txtName.getText().toString().length() == 0) {
+				btnRecordToggle.setChecked(false);
+				Toast.makeText(this, getResources().getString(R.string.msg_empty_fields), Toast.LENGTH_SHORT).show();
+			} else {
+				txtName.setEnabled(false);
+				spnnrVehicle.setEnabled(false);
+				btnRecordToggle.setChecked(true);
+				startService(new Intent(this, E2LLocationService.class));
+			}
 		}
 	}
 
@@ -96,9 +121,22 @@ public class E2LRecordActivity extends Activity implements E2LLocationService.Ca
 		if (serviceStoppedItself) {
 			btnRecordToggle.setChecked(false);
 		} else {
+			E2LActivity activity = new E2LActivityImplementation();
+			activity.setName(txtName.getText().toString());
+			long startTime = locations.get(0).getTime();
+			activity.setTime(new Date(startTime));
+			activity.setDuration(Calendar.getInstance().getTimeInMillis() - startTime);
+
+			ArrayList<E2LActivityLocationImplementation> e2lLocations = new ArrayList<E2LActivityLocationImplementation>(
+					locations.size());
+			for (int i = 0; i < locations.size(); i++) {
+				e2lLocations.add(new E2LActivityLocationImplementation(locations.get(i)));
+			}
+			activity.setLocations(e2lLocations);
+
 			Intent intent = new Intent(this, E2LManageActivity.class);
-			intent.putExtra(E2LManageActivity.EXTRA_ACTIVITY_NAME, txtName.getText().toString());
-			intent.putParcelableArrayListExtra(E2LManageActivity.EXTRA_LOCATIONS, locations);
+			intent.putExtra(E2LManageActivity.EXTRA_ACTIVITY, activity);
+
 			startActivity(intent);
 			finish();
 		}

@@ -14,5 +14,7 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/Energy2Live/lib/ormlite-core-4.31-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/xstream-1.4.2.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/RDFWebTool"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
