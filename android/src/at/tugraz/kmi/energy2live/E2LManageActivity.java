@@ -32,6 +32,7 @@ import at.tugraz.kmi.energy2live.database.E2LDatabaseHelper;
 import at.tugraz.kmi.energy2live.model.implementation.E2LActivityImplementation;
 import at.tugraz.kmi.energy2live.model.implementation.E2LActivityLocationImplementation;
 import at.tugraz.kmi.energy2live.remote.E2LNetworkConnection;
+import at.tugraz.kmi.energy2live.remote.E2LNetworkConnection.ACTION;
 import at.tugraz.kmi.energy2live.widget.ActionBar;
 import at.tugraz.kmi.energy2live.widget.ActionBar.Action;
 import at.tugraz.kmi.energy2live.widget.ActionBar.IntentAction;
@@ -46,7 +47,7 @@ import com.google.android.maps.Overlay;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 
-public class E2LManageActivity extends MapActivity {
+public class E2LManageActivity extends MapActivity implements E2LNetworkConnection.Callback {
 	public static final String EXTRA_ACTIVITY_ID = "EXTRA_ACTIVITY_ID";
 	public static final String EXTRA_ACTIVITY = "EXTRA_ACTIVITY";
 
@@ -60,7 +61,6 @@ public class E2LManageActivity extends MapActivity {
 	private List<Overlay> mMapOverlays;
 
 	private class DeleteAction implements Action {
-
 		@Override
 		public int getDrawable() {
 			return R.drawable.ic_action_delete;
@@ -119,11 +119,6 @@ public class E2LManageActivity extends MapActivity {
 		if (activity != null) {
 			createAndLoadFromActivity(activity);
 		}
-
-		// ArrayList<Parcelable> list = getIntent().getParcelableArrayListExtra(EXTRA_LOCATIONS);
-		// if (list != null) {
-		// populateMap(list);
-		// }
 	}
 
 	@Override
@@ -139,6 +134,7 @@ public class E2LManageActivity extends MapActivity {
 					@Override
 					public void onClick(DialogInterface dialog, int id) {
 						E2LNetworkConnection connection = new E2LNetworkConnection(E2LManageActivity.this);
+						connection.addCallback(E2LManageActivity.this);
 						connection.sendActivityToServer(mActivity);
 					}
 				}).setNegativeButton(res.getString(R.string.no), new DialogInterface.OnClickListener() {
@@ -148,6 +144,19 @@ public class E2LManageActivity extends MapActivity {
 					}
 				});
 		builder.create().show();
+	}
+
+	@Override
+	public void onNetworkConnectionResult(ACTION a, boolean b) {
+		switch (a) {
+		case ACTIVITY:
+			if (b) {
+				toastMessage(getResources().getString(R.string.msg_manage_upload_success));
+			} else {
+				toastMessage(getResources().getString(R.string.msg_manage_upload_failed));
+			}
+			break;
+		}
 	}
 
 	private void deleteActivity() {
@@ -248,7 +257,12 @@ public class E2LManageActivity extends MapActivity {
 		return mDatabaseHelper;
 	}
 
-	private void toastMessage(String msg) {
-		Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+	private void toastMessage(final String msg) {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+			}
+		});
 	}
 }

@@ -51,6 +51,8 @@
     <string name="msg_remote_post_register">Registering…</string>
     <string name="msg_remote_post_activity">Uploading…</string>
     <string name="msg_login_failed">Login failed</string>
+    <string name="msg_manage_upload_success">Activity upload successful</string>
+    <string name="msg_manage_upload_failed">Activity upload failed</string>
 
     <string name="lbl_manage_activity_name_label">Name:</string>
     <string name="lbl_manage_activity_time_label">Time:</string>

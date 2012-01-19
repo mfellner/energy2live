@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
@@ -32,6 +31,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
+import org.apache.http.util.EntityUtils;
 
 import st.energy2live.data.user.User;
 import android.app.ProgressDialog;
@@ -132,7 +132,7 @@ public class E2LNetworkConnection {
 
 		E2LTrackLogAdapter adapter = new E2LTrackLogAdapter(activity);
 		String xml = mXstream.toXML(adapter.getTrackLog());
-		// Log.d("E2L", "XML:\n" + xml);
+		Log.d("E2L", "XML:\n" + xml);
 
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(1);
 		nameValuePairs.add(new BasicNameValuePair("tracklog", xml));
@@ -179,20 +179,42 @@ public class E2LNetworkConnection {
 		thread.start();
 	}
 
-	private void postDataDone(ACTION a, HttpResponse response) {
-		if (response == null)
-			return;
+	private void postDataDone(ACTION action, HttpResponse response) {
+		String responseBody = "";
+		try {
+			responseBody = EntityUtils.toString(response.getEntity());
+		} catch (Exception e) {
+			Log.e("E2L HTTP", e.getMessage());
+		}
 
 		Log.d("E2L HTTP", "status code " + response.getStatusLine().getStatusCode());
 		Log.d("E2L HTTP", response.getStatusLine().getReasonPhrase());
-		for (Header h : response.getAllHeaders()) {
-			Log.d("E2L HTTP", h.getName() + ": " + h.getValue());
-		}
+		Log.d("E2L HTTP", responseBody);
 
 		boolean result = response.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
 
+		if (result) {
+			String openTag = "<status>";
+			String closeTag = "</status>";
+			int start = responseBody.indexOf(openTag, 0);
+			int end = responseBody.indexOf(closeTag, start);
+			String token = responseBody.subSequence(start + openTag.length(), end).toString();
+
+			switch (action) {
+			case LOGIN:
+				result = token.equals("ok");
+				break;
+			case REGISTER:
+				result = token.equals("ok");
+				break;
+			case ACTIVITY:
+				result = token.equals("ok");
+				break;
+			}
+		}
+
 		for (int i = 0; i < mCallbacks.size(); i++) {
-			mCallbacks.get(i).onNetworkConnectionResult(a, result);
+			mCallbacks.get(i).onNetworkConnectionResult(action, result);
 		}
 	}
 }
