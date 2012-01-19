@@ -1,0 +1,1 @@
+Semantische Technologien - Gruppe 2.3 - Fellner, Sumann, Solic

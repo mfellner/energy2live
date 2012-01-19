@@ -1,0 +1,37 @@
+README
+#####################################################################
+
+
+API README
+---------------------------------------------------------------------
+
+{baseurl}/user/{username}
+param: 
+  none
+response: 
+  available: <status>available</status>
+  not available: <status>notavailable</status>
+
+{baseurl}/login
+param: 
+  nickname={nickname}
+  password={password}
+response: 
+  ok: <status>ok</status>
+  failed: <status>failed</status>
+
+{baseurl}/register
+param: 
+  user={serialized user object}
+response: 
+  ok: <status>ok</status>
+  failed: <status>failed</status>
+
+{baseurlapi}/tracklog
+param: 
+  tracklog={serialized tracklog object}
+response: 
+  ok: <status>ok</status>
+  failed: <status>failed</status>
+
+
